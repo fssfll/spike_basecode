@@ -1,0 +1,36 @@
+################################################################################
+# mission_two.py
+#
+# Description:
+# [Describe What your mission does here]
+#
+# Author(s): [Your Name(s)]
+# Date: [YYYY-MM-DD]
+# Version: 1.0
+#
+# Dependencies:
+# - robot
+# - pybricks.tools
+#
+################################################################################
+from robot import robot
+from pybricks.tools import wait, StopWatch
+
+def mission_two(r):
+    print("Running Mission 2")
+    # Your code goes here...
+    # Sample code: Test Driving in a box
+    count = 0
+    while (count < 8):
+        r.robot.straight(500)
+        r.robot.turn(90)
+        wait(100)
+        count += 1
+
+################################
+# KEEP THIS AT THE END OF THE FILE
+# This redirects to running main.
+################################
+if __name__ == "__main__":
+    from main import main
+    main()
