@@ -1,0 +1,45 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Run on BR-01",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "pybricksdev",
+      "args": [
+        "run",
+        "ble",
+        "--name",
+        "BR-01",
+        "${file}"
+      ]
+    },
+    {
+      "name": "Run on BR-02,
+      "type": "debugpy",
+      "request": "launch",
+      "module": "pybricksdev",
+      "args": [
+        "run",
+        "ble",
+        "--name",
+        "BR-02",
+        "${file}"
+      ]
+    },
+    {
+      "name": "Run on BR-03",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "pybricksdev",
+      "args": [
+        "run",
+        "ble",
+        "--name",
+        "BR-03",
+        "${file}"
+      ]
+    }
+  ]
+}
+
