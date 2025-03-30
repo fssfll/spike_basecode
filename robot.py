@@ -113,8 +113,8 @@ PORT_MAPPING = {
     "rdm": Port.D,  # Right Drive Motor (Required)
     "lam": Port.F,  # Left Attachment Motor (Optional)
     "ram": Port.E,  # Right Attachment Motor (Optional)
-    #"lcm": Port.A,  # Left Color Sensor (Optional)
-    #"rcm": Port.B,  # Right Color Sensor (Optional)
+    #"lcs": Port.A,  # Left Color Sensor (Optional)
+    #"rcs": Port.B,  # Right Color Sensor (Optional)
 }
 #############################################
 # Define Brain Orientation
@@ -215,17 +215,17 @@ class robot:
                 print("Right attachment motor initialization error")
         
         # Initialize optional color sensors
-        self.lcm = None
-        if "lcm" in self.port_mapping:
+        self.lcs = None
+        if "lcs" in self.port_mapping:
             try:
-                self.lcm = ColorSensor(self.port_mapping["lcs"])
+                self.lcs = ColorSensor(self.port_mapping["lcs"])
             except:
                 print("Left color sensor initialization error")
         
-        self.rcm = None
-        if "rcm" in self.port_mapping:
+        self.rcs = None
+        if "rcs" in self.port_mapping:
             try:
-                self.rcm = ColorSensor(self.port_mapping["rcs"])
+                self.rcs = ColorSensor(self.port_mapping["rcs"])
             except:
                 print("Right color sensor initialization error")
 
