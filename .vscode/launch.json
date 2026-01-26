@@ -15,7 +15,7 @@
       ]
     },
     {
-      "name": "Run on BR-02,
+      "name": "Run on BR-02",
       "type": "debugpy",
       "request": "launch",
       "module": "pybricksdev",
@@ -42,4 +42,3 @@
     }
   ]
 }
-
