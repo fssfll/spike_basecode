@@ -156,7 +156,7 @@ Create .vscode/launch.json:
         "ble",
         "--name",
         "BR-01",
-        "${file}"
+        "${workspaceFolder}/main.py"
       ]
     },
     {
@@ -169,7 +169,7 @@ Create .vscode/launch.json:
         "ble",
         "--name",
         "BR-02",
-        "${file}"
+        "${workspaceFolder}/main.py"
       ]
     },
     {
@@ -182,7 +182,7 @@ Create .vscode/launch.json:
         "ble",
         "--name",
         "BR-03",
-        "${file}"
+        "${workspaceFolder}/main.py"
       ]
     }
   ]
