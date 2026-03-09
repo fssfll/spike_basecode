@@ -29,7 +29,6 @@ from pybricks.parameters import Port, Direction, Axis, Side, Stop, Color
 from pybricks.robotics import DriveBase
 from pybricks.hubs import PrimeHub
 from pybricks.tools import wait
-from pybricks.pupdevices import Motor, ColorSensor
 from pybricks.parameters import (
     Port,
     Direction,
@@ -40,9 +39,7 @@ from pybricks.parameters import (
     Button,
     Icon,
 )
-from pybricks.robotics import DriveBase
-from pybricks.hubs import PrimeHub
-from pybricks.tools import wait, StopWatch
+from typing import Final, Mapping, Protocol
 
 ################################################################################
 #### <--------------------- BEGIN ROBOT CONFIGURATION --------------------> ####
@@ -96,12 +93,12 @@ from pybricks.tools import wait, StopWatch
 #   r.robot.straight()
 #   r.robot.arc()
 #   r.robot.drive()
-TIRE_DIAMETER = 57  # mm
-AXLE_TRACK = 86  # distance between the wheels, mm
-STRAIGHT_SPEED = 400  # mm/sec
-STRAIGHT_ACCEL = 300  # mm/sec^2
-TURN_RATE = 300  # deg/sec
-TURN_ACCEL = 200  # deg/sec^2
+TIRE_DIAMETER: Final[int] = 57  # mm
+AXLE_TRACK: Final[int] = 86  # distance between the wheels, mm
+STRAIGHT_SPEED: Final[int] = 400  # mm/sec
+STRAIGHT_ACCEL: Final[int] = 300  # mm/sec^2
+TURN_RATE: Final[int] = 300  # deg/sec
+TURN_ACCEL: Final[int] = 200  # deg/sec^2
 #############################################
 # Define Robot Port Mappings
 #############################################
@@ -135,7 +132,7 @@ PORT_MAPPING = {
 #         |     <-()->    |             
 #          ---------------
 #               BOTTOM
-DISPLAY_ORIENTATION=Side.BOTTOM
+DISPLAY_ORIENTATION: Final[Side] = Side.BOTTOM
 #############################################
 # Define Forward (Positive) Rotation For Each Motor
 #############################################
@@ -145,16 +142,69 @@ DISPLAY_ORIENTATION=Side.BOTTOM
 # or upside down.  If your attachment motor is spinning in the wrong
 # direction or if your robot spins in circles when you are trying to
 # drive straight, you likely need to change one of these settings.abs
-LDM_POSITIVE_DIRECTION=Direction.COUNTERCLOCKWISE
-RDM_POSITIVE_DIRECTION=Direction.CLOCKWISE
-LAM_POSITIVE_DIRECTION=Direction.CLOCKWISE
-RAM_POSITIVE_DIRECTION=Direction.CLOCKWISE
+LDM_POSITIVE_DIRECTION: Final[Direction] = Direction.COUNTERCLOCKWISE
+RDM_POSITIVE_DIRECTION: Final[Direction] = Direction.CLOCKWISE
+LAM_POSITIVE_DIRECTION: Final[Direction] = Direction.CLOCKWISE
+RAM_POSITIVE_DIRECTION: Final[Direction] = Direction.CLOCKWISE
 
 ################################################################################
 #### <--------------------- END ROBOT CONFIGURATION --------------------> ####
 ################################################################################
 
+# -----------------------------
+# Minimal typing helpers for IntelliSense
+# -----------------------------
 
+class MotorLike(Protocol):
+    def run_time(self, speed: int, time: int,
+                 then: Stop = Stop.HOLD, wait: bool = True) -> object: ...
+    def run_angle(self, speed: int, rotation_angle: int,
+                  then: Stop = Stop.HOLD, wait: bool = True) -> object: ...
+    def run_until_stalled(
+        self,
+        speed: int,
+        then: Stop = Stop.COAST,
+        duty_limit: int | None = None,
+    ) -> object: ...
+    def dc(self, duty: int) -> None: ...
+    def stop(self) -> None: ...
+
+class NoOpMotor:
+    def run_time(self, speed: int, time: int,
+                 then: Stop = Stop.HOLD, wait: bool = True) -> object:
+        return None
+
+    def run_angle(self, speed: int, rotation_angle: int,
+                  then: Stop = Stop.HOLD, wait: bool = True) -> object:
+        return None
+
+    def run_until_stalled(
+        self,
+        speed: int,
+        then: Stop = Stop.COAST,
+        duty_limit: int | None = None,
+    ) -> object:
+        return 0
+
+    def dc(self, duty: int) -> None:
+        return None
+
+    def stop(self) -> None:
+        return None
+
+class ColorSensorLike(Protocol):
+    # Keep this minimal to match common line-following usage.
+    def reflection(self) -> int: ...
+    def ambient(self) -> int: ...
+
+class NoOpColorSensor:
+    """ColorSensor-shaped object that returns safe defaults when not installed."""
+
+    def reflection(self) -> int:
+        return 50
+
+    def ambient(self) -> int:
+        return 0
 
 ################################
 # Define Robot Class
@@ -163,13 +213,25 @@ RAM_POSITIVE_DIRECTION=Direction.CLOCKWISE
 # are present.  You may also choose to add custom methods like line following,
 # a wheel cleaning routine, gyro calibration, etc. 
 class robot:
-    def __init__(self, port_mapping=PORT_MAPPING):
+    def __init__(self, port_mapping: Mapping[str, Port] = PORT_MAPPING) -> None:
+        """
+        SPIKE Prime robot wrapper.
+
+        Design goal for kid-friendly mission editing:
+        - No attribute should be Optional/None in common usage.
+        - Missing attachments/sensors become NoOp objects instead of None,
+        so VS Code doesn't show "attribute of None" squiggles.
+        """
+
         """Initialize the robot with flexible port assignments."""
         self.port_mapping = port_mapping
         self.display_orientation = DISPLAY_ORIENTATION
         
         try:
-            self.hub = PrimeHub(top_side=Axis.Z, front_side=-Axis.Y)
+            # Axis negation is valid in Pybricks but rejected by type stubs, so ignore typing
+            # fmt: off
+            self.hub = PrimeHub(top_side=Axis.Z, front_side=-Axis.Y)  # pyright: ignore
+            # fmt: on
             self.hub.display.orientation(self.display_orientation)
             self.hub.speaker.volume(50)
         except:
@@ -180,49 +242,58 @@ class robot:
             raise ValueError("Left and Right Drive Motors must be defined!")
         
         try:
-            self.ldm = Motor(self.port_mapping["ldm"], positive_direction=LDM_POSITIVE_DIRECTION)
+            self.ldm = Motor(
+                self.port_mapping["ldm"], positive_direction=LDM_POSITIVE_DIRECTION)
         except:
             print("Left drive motor initialization error")
             raise
         
         try:
-            self.rdm = Motor(self.port_mapping["rdm"], positive_direction=RDM_POSITIVE_DIRECTION)
+            self.rdm = Motor(
+                self.port_mapping["rdm"], positive_direction=RDM_POSITIVE_DIRECTION)
         except:
             print("Right drive motor initialization error")
             raise
         
         try:
-            self.robot = DriveBase(self.ldm, self.rdm, TIRE_DIAMETER, AXLE_TRACK)
+            self.robot = DriveBase(
+                self.ldm, self.rdm, TIRE_DIAMETER, AXLE_TRACK)
             self.robot.use_gyro(True)
+            self.robot.settings(STRAIGHT_SPEED, STRAIGHT_ACCEL,
+                            TURN_RATE, TURN_ACCEL)
         except:
             print("Drive base initialization error")
-        
-        self.robot.settings(STRAIGHT_SPEED, STRAIGHT_ACCEL, TURN_RATE, TURN_ACCEL)
-        
-        # Initialize optional attachment motors
-        self.lam = None
+    
+        # Initialize attachment motors (real or NoOp)
+        self.lam: MotorLike = NoOpMotor()
         if "lam" in self.port_mapping:
             try:
-                self.lam = Motor(self.port_mapping["lam"], positive_direction=LAM_POSITIVE_DIRECTION)
+                self.lam = Motor(
+                    self.port_mapping["lam"],
+                    positive_direction=LAM_POSITIVE_DIRECTION,
+                )
             except:
                 print("Left attachment motor initialization error")
         
-        self.ram = None
+        self.ram: MotorLike = NoOpMotor()
         if "ram" in self.port_mapping:
             try:
-                self.ram = Motor(self.port_mapping["ram"], positive_direction=RAM_POSITIVE_DIRECTION)
+                self.ram = Motor(
+                    self.port_mapping["ram"],
+                    positive_direction=RAM_POSITIVE_DIRECTION,
+                )
             except:
                 print("Right attachment motor initialization error")
         
-        # Initialize optional color sensors
-        self.lcs = None
+        # Color sensors (real or NoOp)
+        self.lcs: ColorSensorLike = NoOpColorSensor()
         if "lcs" in self.port_mapping:
             try:
                 self.lcs = ColorSensor(self.port_mapping["lcs"])
             except:
                 print("Left color sensor initialization error")
         
-        self.rcs = None
+        self.rcs: ColorSensorLike = NoOpColorSensor()
         if "rcs" in self.port_mapping:
             try:
                 self.rcs = ColorSensor(self.port_mapping["rcs"])
@@ -233,7 +304,7 @@ class robot:
 # Add Custom Methods Here
 #####################################
 
-    # Check Batter Level
+    # Check Battery Level
     def show_battery_level(self):
         """Display battery level using LED ring and matrix."""
         self.hub.display.off()
@@ -257,9 +328,9 @@ class robot:
 
         if led_color in [Color.ORANGE, Color.RED]:
             for _ in range(5):
-                self.hub.display.icon(battery_icon)
+                self.hub.display.icon(battery_icon) # pyright: ignore
                 wait(500)
-                self.hub.display.icon(off_icon)
+                self.hub.display.icon(off_icon) # pyright: ignore
                 wait(500)
 
 ################################

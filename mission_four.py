@@ -16,7 +16,7 @@
 from robot import robot
 from pybricks.tools import wait, StopWatch
 
-def mission_four(r):
+def mission_four(r: robot):
     print("Running Mission 4")
     # Your code goes here...
     # Sample code: Test the speaker

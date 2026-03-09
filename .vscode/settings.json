@@ -1,26 +1,40 @@
 {
+  "python.defaultInterpreterPath": "${workspaceFolder}/.venv/bin/python",
+  "python.analysis.typeCheckingMode": "basic",
+  "python.analysis.diagnosticMode": "workspace",
+  "python.analysis.autoImportCompletions": true,
   "terminal.integrated.profiles.osx": {
     "venv (zsh)": {
       "path": "zsh",
-      "args": ["-l", "-c", "source .venv/bin/activate && exec zsh -l"]
+      "args": [
+        "-l",
+        "-c",
+        "source .venv/bin/activate && exec zsh -l"
+      ]
     }
   },
   "terminal.integrated.defaultProfile.osx": "venv (zsh)",
-
   "terminal.integrated.profiles.windows": {
     "venv (PowerShell)": {
       "path": "powershell.exe",
-      "args": ["-NoExit", "-ExecutionPolicy", "Bypass", "-Command", ".\\.venv\\Scripts\\Activate.ps1"]
+      "args": [
+        "-NoExit",
+        "-ExecutionPolicy",
+        "Bypass",
+        "-Command",
+        ".\\.venv\\Scripts\\Activate.ps1"
+      ]
     }
   },
   "terminal.integrated.defaultProfile.windows": "venv (PowerShell)",
-
   "terminal.integrated.profiles.linux": {
     "venv (bash)": {
       "path": "bash",
-      "args": ["-lc", "source .venv/bin/activate && exec bash -l"]
+      "args": [
+        "-lc",
+        "source .venv/bin/activate && exec bash -l"
+      ]
     }
   },
   "terminal.integrated.defaultProfile.linux": "venv (bash)"
 }
-
