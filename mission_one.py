@@ -16,7 +16,7 @@
 from robot import robot
 from pybricks.tools import wait, StopWatch
 
-def mission_one(r):
+def mission_one(r: robot):
     print("Running Mission 1")
     # Your code goes here...
     # Sample Code: Run attachment motors and drive motors

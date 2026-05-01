@@ -291,3 +291,18 @@ If you see (.venv) in the terminal prompt, you are ready to run code.
   - Windows: run “Activate venv” (PowerShell)
      -- If PowerShell blocks scripts, run:
      -- Set-ExecutionPolicy -Scope CurrentUser RemoteSigned
+
+13.  Strongly Recommended VS Code Extensions
+To get the best editing experience when working with this project in VS Code, you should install the following extensions:
+
+  - Python (Microsoft)
+    Adds Python language support in VS Code.
+
+  - Pylance (Microsoft)
+    Provides IntelliSense features such as:
+     -- autocomplete
+     -- method suggestions
+     -- jump-to-definition
+     -- helpful warnings while typing
+
+These extensions allow VS Code to better understand the Pybricks APIs used in this project. Without them, the editor may show missing autocomplete or confusing red squiggles even when the code is correct.
