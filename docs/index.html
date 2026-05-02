@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FSS FIRST Lego League — Robotics Resources</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,400;0,500;1,400&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --red:        #ED1C24;
+    --black:      #1A1A1A;
+    --gray-dark:  #4A4A4A;
+    --gray-mid:   #9A9A9A;
+    --gray-line:  #E0E0E0;
+    --gray-light: #F5F5F5;
+    --white:      #FFFFFF;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 400;
+    color: var(--black);
+    background: var(--white);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .accent-bar { height: 6px; background: var(--red); flex-shrink: 0; }
+
+  /* ── HEADER ── */
+  header {
+    padding: 40px 80px 36px;
+    border-bottom: 1px solid var(--gray-line);
+    max-width: 900px;
+    width: 100%;
+    margin: 0 auto;
+  }
+
+  .section-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--red);
+    margin-bottom: 10px;
+  }
+
+  header h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 32px;
+    font-weight: 400;
+    line-height: 1.2;
+    margin-bottom: 14px;
+  }
+
+  header h1 em { font-style: italic; }
+
+  header p {
+    font-size: 14px;
+    color: var(--gray-dark);
+    line-height: 1.75;
+    max-width: 580px;
+    font-weight: 300;
+  }
+
+  /* ── MAIN ── */
+  main {
+    flex: 1;
+    padding: 44px 80px 60px;
+    max-width: 900px;
+    width: 100%;
+    margin: 0 auto;
+  }
+
+  /* ── AUDIENCE SECTIONS ── */
+  .audience-block { margin-bottom: 48px; }
+
+  .audience-heading {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--red);
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--gray-line);
+    margin-bottom: 28px;
+  }
+
+  /* ── DL / DT / DD ── */
+  dl { display: flex; flex-direction: column; gap: 0; }
+
+  .doc-entry {
+    display: grid;
+    grid-template-columns: 260px 1fr;
+    gap: 0 40px;
+    padding: 20px 0;
+    border-bottom: 1px solid var(--gray-line);
+    align-items: baseline;
+  }
+
+  .doc-entry:first-of-type { border-top: none; }
+
+  dt {
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.4;
+  }
+
+  dt a {
+    color: var(--black);
+    text-decoration: none;
+    border-bottom: 1px solid var(--red);
+    padding-bottom: 1px;
+    transition: color 0.15s, border-color 0.15s;
+  }
+
+  dt a:hover {
+    color: var(--red);
+  }
+
+  .doc-tag {
+    display: inline-block;
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--gray-mid);
+    background: var(--gray-light);
+    border: 1px solid var(--gray-line);
+    padding: 2px 6px;
+    border-radius: 2px;
+    margin-top: 5px;
+    display: block;
+  }
+
+  dd {
+    font-size: 13px;
+    color: var(--gray-dark);
+    line-height: 1.75;
+    font-weight: 300;
+  }
+
+  dd strong {
+    font-weight: 600;
+    color: var(--black);
+  }
+
+  /* ── CALLOUT ── */
+  .callout {
+    border-left: 3px solid var(--red);
+    padding: 10px 16px;
+    margin-top: 40px;
+    background: var(--gray-light);
+  }
+
+  .callout p {
+    font-size: 12.5px;
+    color: var(--gray-dark);
+    line-height: 1.7;
+  }
+
+  .callout p strong { font-weight: 600; color: var(--black); }
+
+  /* ── FOOTER ── */
+  footer {
+    height: 52px;
+    border-top: 2px solid var(--red);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 80px;
+    flex-shrink: 0;
+  }
+
+  .footer-text {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--gray-mid);
+  }
+
+  .footer-text a {
+    color: var(--gray-mid);
+    text-decoration: none;
+    border-bottom: 1px solid var(--gray-line);
+  }
+
+  .footer-text a:hover { color: var(--red); border-color: var(--red); }
+</style>
+</head>
+<body>
+
+<div class="accent-bar"></div>
+
+<header>
+  <div class="section-label">FSS Bolton Robotics · FIRST Lego League</div>
+  <h1>Robotics <em>Resources</em></h1>
+  <p>
+    Guides and reference materials for coaches and students participating in the FSS FIRST Lego League program. All documents cover the Bolton Robotics development environment using Pybricks and VS Code.
+  </p>
+</header>
+
+<main>
+
+  <!-- ── COACHES ──────────────────────────────────────────── -->
+  <div class="audience-block">
+    <div class="audience-heading">For Coaches</div>
+    <dl>
+      <div class="doc-entry">
+        <dt>
+          <a href="complete_quick_start_setup-reference-card.html">Complete Dev Env Setup Guide</a>
+          <span class="doc-tag">Reference Card · Coaches</span>
+        </dt>
+        <dd>
+          <strong>Start here if you are setting up a new laptop.</strong> Covers the full development environment from scratch: installing Git, Python, and VS Code; cloning the team repository; creating and activating a Python virtual environment; installing dependencies; configuring the VS Code Python interpreter; and deploying code to the SPIKE Prime hub over Bluetooth. Includes an annotated <code>launch.json</code> example and a glossary of key terms.
+        </dd>
+      </div>
+    </dl>
+  </div>
+
+  <!-- ── STUDENTS ─────────────────────────────────────────── -->
+  <div class="audience-block">
+    <div class="audience-heading">For Students</div>
+    <dl>
+
+      <div class="doc-entry">
+        <dt>
+          <a href="student_vscode_git_use_guide.html">Coding Session Guide</a>
+          <span class="doc-tag">Session Guide · Students</span>
+        </dt>
+        <dd>
+          <strong>Your go-to guide for every coding session, for use on a laptop that's ready for VS Code and GitHub.</strong> Walks through the complete session loop: opening VS Code, finding your mission file, writing and testing code, deploying to the robot over Bluetooth, and committing your changes with GitHub Desktop at the end of the session. Includes a VS Code Run and Debug walkthrough, Bluetooth troubleshooting steps, and guidance on committing your work so teammates can build on it next time.
+        </dd>
+      </div>
+
+      <div class="doc-entry">
+        <dt>
+          <a href="fss_fll_getting_started_with_github.html">GitHub Quick Start Guide</a>
+          <span class="doc-tag">Guide · Students &amp; Coaches</span>
+        </dt>
+        <dd>
+          <strong>An introduction to version control for the FLL program.</strong> Explains what GitHub is and why the team uses it, how the shared repository is organized, and how to use GitHub Desktop to track changes, write commit messages, and collaborate across the team. Suitable as a first read for students new to version control, and as a reference for coaches onboarding new team members.
+        </dd>
+      </div>
+
+      <div class="doc-entry">
+        <dt>
+          <a href="bolton_robotics_explorer_github_comic_book.pdf">Getting Started with GitHub — Comic Book</a>
+          <span class="doc-tag">Comic Book · PDF · Students</span>
+        </dt>
+        <dd>
+          <strong>A visual, story-driven introduction to GitHub for new team members.</strong> Follows the Bolton Robotics Explorer through the basics of version control — repositories, commits, and collaboration — in an illustrated comic book format. A great companion to the GitHub Quick Start Guide for students who learn best through visuals and narrative.
+        </dd>
+      </div>
+
+    </dl>
+  </div>
+
+  <div class="callout">
+    <p>
+      <strong>Coaches:</strong> these documents are published from the <code>docs/</code> folder of the <a href="https://github.com/fssfll/spike_basecode" style="color:var(--gray-dark);border-bottom:1px solid var(--gray-line);">fssfll/spike_basecode</a> repository. To update a guide, edit the HTML file and commit — GitHub Pages will publish the change automatically.
+    </p>
+  </div>
+
+</main>
+
+<footer>
+  <div class="footer-text">FSS Bolton Robotics · FIRST Lego League</div>
+  <div class="footer-text"><a href="https://github.com/fssfll/spike_basecode">github.com/fssfll/spike_basecode</a></div>
+</footer>
+
+</body>
+</html>

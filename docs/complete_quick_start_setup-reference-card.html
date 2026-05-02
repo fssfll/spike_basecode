@@ -1,0 +1,918 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bolton Robotics — Complete Dev Environment Setup Guide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,400;0,500;1,400&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --red:        #ED1C24;
+    --red-dark:   #C41019;
+    --black:      #1A1A1A;
+    --gray-dark:  #4A4A4A;
+    --gray-mid:   #9A9A9A;
+    --gray-line:  #E0E0E0;
+    --gray-light: #F5F5F5;
+    --white:      #FFFFFF;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 400;
+    color: var(--black);
+    background: var(--white);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .accent-bar { height: 6px; background: var(--red); flex-shrink: 0; }
+
+  /* ── HEADER ── */
+  header {
+    padding: 28px 48px 22px;
+    border-bottom: 1px solid var(--gray-line);
+  }
+
+  .back-link {
+    display: inline-block;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--gray-mid);
+    text-decoration: none;
+    margin-bottom: 14px;
+    transition: color 0.15s;
+  }
+
+  .back-link:hover { color: var(--red); }
+
+  .section-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--red);
+    margin-bottom: 6px;
+  }
+
+  header h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 25px;
+    font-weight: 400;
+    color: var(--black);
+    line-height: 1.15;
+    margin-bottom: 8px;
+  }
+
+  header h1 em { font-style: italic; }
+
+  .audience-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--gray-light);
+    border: 1px solid var(--gray-line);
+    border-left: 3px solid var(--red);
+    padding: 4px 10px;
+    margin-bottom: 10px;
+    border-radius: 0 2px 2px 0;
+  }
+
+  .audience-tag span {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--red);
+  }
+
+  .audience-tag p {
+    font-size: 12px;
+    font-weight: 400;
+    color: var(--gray-dark);
+  }
+
+  .header-intro {
+    font-size: 13px;
+    font-weight: 400;
+    color: var(--gray-dark);
+    line-height: 1.6;
+    max-width: 740px;
+  }
+
+  /* ── ROADMAP ── */
+  .roadmap {
+    background: var(--gray-light);
+    border-bottom: 1px solid var(--gray-line);
+    padding: 18px 48px;
+  }
+
+  .roadmap-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--red);
+    margin-bottom: 12px;
+  }
+
+  .roadmap-phases {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+  }
+
+  .roadmap-phase {
+    display: flex;
+    align-items: flex-start;
+    gap: 9px;
+    position: relative;
+  }
+
+  .roadmap-phase:not(:last-child)::after {
+    content: '→';
+    position: absolute;
+    right: -7px;
+    top: 4px;
+    font-size: 13px;
+    color: var(--gray-mid);
+  }
+
+  .phase-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    font-weight: 500;
+    color: var(--white);
+    background: var(--red);
+    width: 19px;
+    height: 19px;
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .phase-title {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--black);
+    line-height: 1.3;
+  }
+
+  .phase-sub {
+    font-size: 11px;
+    font-weight: 300;
+    color: var(--gray-dark);
+    line-height: 1.4;
+    margin-top: 2px;
+  }
+
+  /* ── MAIN GRID ── */
+  main {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .col { padding: 28px 48px; }
+  .col + .col { border-left: 1px solid var(--gray-line); }
+
+  .col-heading {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--red);
+    margin-bottom: 18px;
+    padding-bottom: 9px;
+    border-bottom: 1px solid var(--gray-line);
+  }
+
+  /* ── STEPS ── */
+  .steps { display: flex; flex-direction: column; gap: 16px; }
+
+  .step {
+    display: grid;
+    grid-template-columns: 26px 1fr;
+    gap: 11px;
+    align-items: start;
+  }
+
+  .step-index {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--white);
+    background: var(--red);
+    width: 22px;
+    height: 22px;
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .step-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--black);
+    margin-bottom: 3px;
+    line-height: 1.3;
+  }
+
+  .step-why {
+    font-size: 11.5px;
+    color: var(--gray-dark);
+    line-height: 1.55;
+    margin-bottom: 5px;
+  }
+
+  .step-how {
+    font-size: 11.5px;
+    font-weight: 500;
+    color: var(--black);
+    margin-bottom: 4px;
+  }
+
+  code {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    background: var(--gray-light);
+    padding: 2px 5px;
+    border-radius: 2px;
+    color: var(--black);
+    border: 1px solid var(--gray-line);
+  }
+
+  .cmd-block {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    background: var(--gray-light);
+    border: 1px solid var(--gray-line);
+    border-left: 3px solid var(--gray-mid);
+    padding: 7px 10px;
+    color: var(--black);
+    line-height: 1.75;
+    border-radius: 0 2px 2px 0;
+    white-space: pre;
+  }
+
+  .callout {
+    border-left: 3px solid var(--red);
+    padding: 7px 11px;
+    margin-top: 6px;
+    background: #fff8f8;
+  }
+
+  .callout p {
+    font-size: 11.5px;
+    color: var(--gray-dark);
+    line-height: 1.55;
+  }
+
+  .callout strong { font-weight: 600; color: var(--black); }
+
+  .info-callout {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  border-left: 3px solid #1a73e8;
+  padding: 9px 11px;
+  margin: 4px 0 4px 37px;
+  background: #f0f6ff;
+  border-radius: 0 2px 2px 0;
+}
+
+.info-callout-icon {
+  font-size: 13px;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.info-callout p {
+  font-size: 11.5px;
+  color: var(--gray-dark);
+  line-height: 1.6;
+}
+
+.info-callout code {
+  background: #dceafc;
+  border-color: #b3d0f7;
+}
+
+  .section-divider {
+    margin: 18px 0 15px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .section-divider hr { flex: 1; border: none; border-top: 1px solid var(--gray-line); }
+
+  .section-divider span {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--red);
+    white-space: nowrap;
+  }
+
+  /* ── WORKFLOW ── */
+  .workflow { display: flex; flex-direction: column; }
+
+  .wf-node {
+    display: grid;
+    grid-template-columns: 34px 1fr;
+    gap: 10px;
+    align-items: start;
+  }
+
+  .wf-icon-col { display: flex; flex-direction: column; align-items: center; }
+
+  .wf-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 4px;
+    background: var(--gray-light);
+    border: 1px solid var(--gray-line);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+    flex-shrink: 0;
+  }
+
+  .wf-connector {
+    width: 1px;
+    min-height: 12px;
+    flex: 1;
+    background: var(--gray-line);
+    margin: 3px 0;
+  }
+
+  .wf-content { padding-bottom: 12px; }
+  .wf-label { font-size: 12.5px; font-weight: 600; color: var(--black); line-height: 1.3; margin-bottom: 2px; }
+  .wf-why { font-size: 11.5px; color: var(--gray-dark); line-height: 1.5; }
+  .wf-node:last-child .wf-connector { display: none; }
+
+  /* ── EXTENSION LIST ── */
+  .ext-list { display: flex; flex-direction: column; gap: 5px; margin-top: 5px; }
+
+  .ext-item { display: flex; align-items: center; gap: 8px; }
+
+  .ext-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--red); flex-shrink: 0; }
+
+  .ext-name {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    background: var(--gray-light);
+    padding: 2px 6px;
+    border: 1px solid var(--gray-line);
+    border-radius: 2px;
+    color: var(--black);
+  }
+
+  .ext-desc { font-size: 11.5px; color: var(--gray-dark); }
+
+  /* ── LAUNCH.JSON SECTION ── */
+  .launch-section {
+    border-top: 1px solid var(--gray-line);
+    padding: 22px 48px;
+    background: var(--white);
+  }
+
+  .launch-inner {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+    align-items: start;
+  }
+
+  .launch-heading {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--red);
+    margin-bottom: 10px;
+  }
+
+  .launch-why {
+    font-size: 12px;
+    color: var(--gray-dark);
+    line-height: 1.6;
+    margin-bottom: 12px;
+  }
+
+  .launch-steps { display: flex; flex-direction: column; gap: 9px; }
+
+  .launch-step {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+  }
+
+  .launch-step-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    font-weight: 500;
+    color: var(--white);
+    background: var(--gray-mid);
+    width: 18px;
+    height: 18px;
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .launch-step p { font-size: 12px; color: var(--gray-dark); line-height: 1.55; }
+  .launch-step strong { font-weight: 600; color: var(--black); }
+
+  .json-block {
+    font-family: 'DM Mono', monospace;
+    font-size: 10.5px;
+    background: var(--gray-light);
+    border: 1px solid var(--gray-line);
+    border-left: 3px solid var(--gray-mid);
+    padding: 12px 14px;
+    color: var(--black);
+    line-height: 1.8;
+    border-radius: 0 2px 2px 0;
+    white-space: pre;
+  }
+
+  .json-highlight { color: var(--red); font-weight: 500; }
+
+  .json-caption {
+    font-size: 11px;
+    color: var(--gray-mid);
+    margin-top: 6px;
+    line-height: 1.5;
+  }
+
+  /* ── GLOSSARY ── */
+  .glossary-section {
+    border-top: 1px solid var(--gray-line);
+    background: var(--gray-light);
+    padding: 20px 48px 24px;
+  }
+
+  .glossary-heading {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--red);
+    margin-bottom: 14px;
+  }
+
+  .glossary-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px 32px;
+  }
+
+  .glossary-item {}
+
+  .glossary-term {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--black);
+    background: var(--white);
+    border: 1px solid var(--gray-line);
+    border-left: 3px solid var(--red);
+    padding: 2px 7px;
+    display: inline-block;
+    margin-bottom: 4px;
+    border-radius: 0 2px 2px 0;
+  }
+
+  .glossary-def {
+    font-size: 11.5px;
+    color: var(--gray-dark);
+    line-height: 1.5;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    height: 52px;
+    background: var(--white);
+    border-top: 2px solid var(--red);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 48px;
+    flex-shrink: 0;
+  }
+
+  .footer-left, .footer-right {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--gray-mid);
+  }
+</style>
+</head>
+<body>
+
+<div class="accent-bar"></div>
+
+<!-- ══ HEADER ═══════════════════════════════════════════════════ -->
+<header>
+  <a class="back-link" href="index.html">&#8592; All Resources</a>
+  <div class="section-label">Bolton Robotics · First Lego League</div>
+  <h1>Complete Dev Environment <em>Setup Guide</em></h1>
+
+  <div class="audience-tag">
+    <span>Audience</span>
+    <p>Coaches — this guide assumes a fresh laptop with no prior robotics software installed.</p>
+  </div>
+
+  <p class="header-intro">
+    This guide walks you through setting up a modern robotics coding workspace on your computer from scratch.
+    You will install a few free tools, download the team's shared code, and be ready to write and deploy programs to the robot.
+    This is a one-time setup — once it's done, your everyday routine is just a few clicks.
+    A separate, shorter guide covers the student workflow for laptops where setup is already complete.
+  </p>
+</header>
+
+<!-- ══ ROADMAP ══════════════════════════════════════════════════ -->
+<div class="roadmap">
+  <div class="roadmap-label">What you're about to do — five phases, completed once</div>
+  <div class="roadmap-phases">
+
+    <div class="roadmap-phase">
+      <div class="phase-num">1</div>
+      <div>
+        <div class="phase-title">Install the tools</div>
+        <div class="phase-sub">Git, Python, VS Code</div>
+      </div>
+    </div>
+
+    <div class="roadmap-phase">
+      <div class="phase-num">2</div>
+      <div>
+        <div class="phase-title">Get the team's code</div>
+        <div class="phase-sub">Download from GitHub</div>
+      </div>
+    </div>
+
+    <div class="roadmap-phase">
+      <div class="phase-num">3</div>
+      <div>
+        <div class="phase-title">Create a safe workspace</div>
+        <div class="phase-sub">Virtual environment</div>
+      </div>
+    </div>
+
+    <div class="roadmap-phase">
+      <div class="phase-num">4</div>
+      <div>
+        <div class="phase-title">Configure VS Code</div>
+        <div class="phase-sub">Extensions &amp; interpreter</div>
+      </div>
+    </div>
+
+    <div class="roadmap-phase">
+      <div class="phase-num">5</div>
+      <div>
+        <div class="phase-title">Deploy to the robot</div>
+        <div class="phase-sub">Send code over Bluetooth</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══ MAIN COLUMNS ══════════════════════════════════════════════ -->
+<main>
+
+  <!-- ═══ LEFT COLUMN ══════════════════════════════════════════ -->
+  <div class="col">
+
+    <div class="col-heading">Phases 1 – 3 · Installation &amp; Project Setup</div>
+
+    <div class="steps">
+
+      <div class="step">
+        <div class="step-index">1</div>
+        <div>
+          <div class="step-title">Install Git</div>
+          <div class="step-why">Git is how your computer downloads the team's shared code and tracks every change you make — like a save-history for your project. If something breaks, you can always go back.</div>
+          <div class="step-how">Download from <code>git-scm.com</code> and accept all defaults. Verify in a terminal:</div>
+          <div class="cmd-block">git --version</div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-index">2</div>
+        <div>
+          <div class="step-title">Install Python 3</div>
+          <div class="step-why">Python is the language the robots are programmed in. Your computer needs it installed so you can run, test, and check code before it ever goes near the robot.</div>
+          <div class="step-how">Download from <code>python.org</code>. During setup, check <strong>Add Python to PATH</strong>. Verify:</div>
+          <div class="cmd-block">python --version</div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-index">3</div>
+        <div>
+          <div class="step-title">Install VS Code</div>
+          <div class="step-why">VS Code is the editor where students write robot programs. It's free, widely used professionally, and has features that help catch mistakes while you type — before they cause problems on the field.</div>
+          <div class="step-how">Download from <code>code.visualstudio.com</code> and install normally.</div>
+        </div>
+      </div>
+
+      <div class="section-divider"><hr><span>Project Setup</span><hr></div>
+
+      <div class="step">
+        <div class="step-index">4</div>
+        <div>
+          <div class="step-title">Download the Team's Code</div>
+          <div class="step-why">This pulls a copy of the Bolton Robotics codebase from GitHub onto your computer. Every coach and student starts from the same shared foundation, so nobody is working in isolation.</div>
+          <div class="step-how">Run in a terminal:</div>
+          <div class="cmd-block">git clone https://github.com/fssfll/spike_basecode
+cd spike_basecode</div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-index">5</div>
+        <div>
+          <div class="step-title">Create a Virtual Environment</div>
+          <div class="step-why">This creates a private, self-contained workspace for this project's tools — keeping your robotics setup completely separate from anything else on your computer and ensuring every coach's setup behaves identically.</div>
+          <div class="cmd-block">python -m venv .venv</div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-index">6</div>
+        <div>
+          <div class="step-title">Activate the Virtual Environment</div>
+          <div class="step-why">Activating "steps into" your private workspace. Do this once each time you open a new terminal. Your terminal prompt will show <code>(.venv)</code> as confirmation.</div>
+          <div class="cmd-block"># macOS / Linux
+source .venv/bin/activate
+
+# Windows
+.venv\Scripts\activate</div>
+          <div class="callout">
+            <p><strong>Always activate first.</strong> If you skip this, commands run against your system Python instead of the project's tools, and things may not work as expected.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-index">7</div>
+        <div>
+          <div class="step-title">Install Project Tools</div>
+          <div class="step-why">This installs everything the project depends on — including <code>pybricksdev</code>, the tool that sends your finished code to the robot over Bluetooth.</div>
+          <div class="cmd-block">pip install -r requirements.txt</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═══ RIGHT COLUMN ══════════════════════════════════════════ -->
+  <div class="col">
+
+    <div class="col-heading">Phases 4 – 5 · VS Code Setup &amp; Daily Workflow</div>
+
+    <div class="steps">
+
+      <div class="step">
+        <div class="step-index">8</div>
+        <div>
+          <div class="step-title">Open the Project in VS Code</div>
+          <div class="step-why">Opening the whole project folder — not just a single file — lets VS Code see and apply all the project's settings and configuration at once.</div>
+          <div class="step-how"><strong>File → Open Folder</strong> → select the <code>spike_basecode</code> folder.</div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-index">9</div>
+        <div>
+          <div class="step-title">Install VS Code Extensions</div>
+          <div class="step-why">VS Code doesn't understand Python by default — extensions teach it the language. These three unlock error highlighting, autocomplete, and the ability to deploy code directly from the editor.</div>
+          <div class="step-how">Open Extensions with <code>Ctrl+Shift+X</code> and install each:</div>
+          <div class="ext-list">
+            <div class="ext-item"><div class="ext-dot"></div><span class="ext-name">ms-python.python</span><span class="ext-desc">&nbsp;· Python</span></div>
+            <div class="ext-item"><div class="ext-dot"></div><span class="ext-name">ms-python.pylance</span><span class="ext-desc">&nbsp;· Pylance (autocomplete)</span></div>
+            <div class="ext-item"><div class="ext-dot"></div><span class="ext-name">ms-python.debugpy</span><span class="ext-desc">&nbsp;· Python Debugger</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="info-callout">     
+      <div class="info-callout-icon">ℹ️</div>
+        <p>      
+          <strong>About these extensions and the debugger.</strong>
+          <code>pybricksdev</code> is a Python CLI tool that communicates with the
+          robot over Bluetooth/BLE — the <code>.venv</code> provides a sandbox for
+          it to run. <code>ms-python.debugpy</code> is installed because the
+          <code>ms-python.python</code> extension requires it, but
+          <code>"noDebug": true</code> in <code>launch.json</code> bypasses the
+          debugger entirely. You cannot set breakpoints or attach to running code on
+          the hub — the robot executes MicroPython on the SPIKE Prime, not on your
+          laptop.
+        </p>
+      </div>
+      <div class="step">
+        <div class="step-index">10</div>
+        <div>
+          <div class="step-title">Point VS Code at Your Virtual Environment</div>
+          <div class="step-why">VS Code needs to know which Python to use. Selecting your <code>.venv</code> activates autocomplete and error checking tuned specifically for Pybricks — the robot's programming library.</div>
+          <div class="step-how">Press <code>Ctrl+Shift+P</code> → type <strong>Python: Select Interpreter</strong> → choose the option labeled <code>.venv</code>.</div>
+          <div class="callout">
+            <p><strong>This is the payoff.</strong> After this step, VS Code highlights mistakes and offers completions as students type — catching errors before code ever touches the robot.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-divider"><hr><span>Phase 5 · Your Daily Routine</span><hr></div>
+
+    <p style="font-size:12px;color:var(--gray-dark);line-height:1.6;margin-bottom:14px;">
+      Once setup is complete, the heavy lifting is behind you. Every session follows this simple loop.
+    </p>
+
+    <div class="workflow">
+
+      <div class="wf-node">
+        <div class="wf-icon-col"><div class="wf-icon">✏️</div><div class="wf-connector"></div></div>
+        <div class="wf-content">
+          <div class="wf-label">Write or edit code in VS Code</div>
+          <div class="wf-why">Autocomplete and error highlighting help students catch mistakes as they type, not after the robot fails on the field.</div>
+        </div>
+      </div>
+
+      <div class="wf-node">
+        <div class="wf-icon-col"><div class="wf-icon">🔵</div><div class="wf-connector"></div></div>
+        <div class="wf-content">
+          <div class="wf-label">Power on the SPIKE Hub</div>
+          <div class="wf-why">The hub communicates with your computer over Bluetooth — no USB cable or extra app required.</div>
+        </div>
+      </div>
+
+      <div class="wf-node">
+        <div class="wf-icon-col"><div class="wf-icon">▶️</div><div class="wf-connector"></div></div>
+        <div class="wf-content">
+          <div class="wf-label">Open the Run panel and deploy</div>
+          <div class="wf-why">Click the <strong>Run and Debug</strong> icon in the left sidebar (or press <code>Ctrl+Shift+D</code>). Use the dropdown at the top of the panel to select the robot you want to program — each robot on your team has its own entry by name. Then click the green <strong>▶ Play</strong> button. VS Code sends the code wirelessly to that robot.</div>
+        </div>
+      </div>
+
+      <div class="wf-node">
+        <div class="wf-icon-col"><div class="wf-icon">🤖</div><div class="wf-connector"></div></div>
+        <div class="wf-content">
+          <div class="wf-label">Watch, adjust, and repeat</div>
+          <div class="wf-why">Observe what the robot does. Fix the code in VS Code. Then click the green <strong>▶ Play</strong> button again — every run pushes a fresh copy of your changes to the robot. Repeat until the behavior is right.</div>
+        </div>
+      </div>
+
+      <div class="wf-node">
+        <div class="wf-icon-col"><div class="wf-icon">💾</div></div>
+        <div class="wf-content">
+          <div class="wf-label">Commit and push to GitHub</div>
+          <div class="wf-why">Saving your work to GitHub shares it with the whole team and keeps a full history of every version — nothing is ever lost.</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</main>
+
+<!-- ══ LAUNCH.JSON SECTION ══════════════════════════════════════ -->
+<div class="launch-section">
+  <div class="launch-inner">
+
+    <div>
+      <div class="launch-heading">Adding or Renaming Robots in the Run Panel</div>
+      <p class="launch-why">
+        The dropdown list of robots in VS Code's Run panel is controlled by a file called <code>launch.json</code>, found inside the <code>.vscode</code> folder in your project. Each robot on your team has its own entry — called a <em>configuration</em> — in that file. Adding a new robot or renaming one is straightforward: you only need to change the robot's Bluetooth name in two places per entry.
+      </p>
+
+      <div class="launch-steps">
+        <div class="launch-step">
+          <div class="launch-step-num">1</div>
+          <p>Open <strong>.vscode / launch.json</strong> in VS Code. You will see one block per robot inside the <code>"configurations"</code> list.</p>
+        </div>
+        <div class="launch-step">
+          <div class="launch-step-num">2</div>
+          <p>To add a new robot, copy an existing block (from <code>{</code> to its closing <code>},</code>) and paste it below the last entry.</p>
+        </div>
+        <div class="launch-step">
+          <div class="launch-step-num">3</div>
+          <p>Change the robot's Bluetooth name in <strong>two places</strong> within the new block: the <code>"name"</code> field (what appears in the dropdown) and the <code>--name</code> argument in the <code>"args"</code> list (what is sent over Bluetooth). Both must match the name shown on the hub's screen exactly.</p>
+        </div>
+        <div class="launch-step">
+          <div class="launch-step-num">4</div>
+          <p>Save the file. The new robot name will appear immediately in the Run panel dropdown.</p>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="launch-heading">Example — Two Robots in launch.json</div>
+      <div class="json-block">{
+  "configurations": [
+    {
+      "name": "<span class="json-highlight">Thought Process</span>",
+      "type": "debugpy",
+      "request": "launch",
+      "noDebug": true,
+      "module": "pybricksdev",
+      "args": [
+        "run", "ble",
+        "--name", "<span class="json-highlight">Thought Process</span>",
+        "main.py"
+      ]
+    },
+    {
+      "name": "<span class="json-highlight">Bot Two</span>",
+      "type": "debugpy",
+      "request": "launch",
+      "noDebug": true,
+      "module": "pybricksdev",
+      "args": [
+        "run", "ble",
+        "--name", "<span class="json-highlight">Bot Two</span>",
+        "main.py"
+      ]
+    }
+  ]
+}</div>
+      <p class="json-caption">Red values are the only things you change per robot. Both must match the Bluetooth name shown on that hub's screen.</p>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══ GLOSSARY ══════════════════════════════════════════════════ -->
+<div class="glossary-section">
+  <div class="glossary-heading">Glossary — Terms Used in This Guide</div>
+  <div class="glossary-grid">
+
+    <div class="glossary-item">
+      <div class="glossary-term">terminal</div>
+      <div class="glossary-def">A text-based window where you type commands directly. On Mac, open it by searching for "Terminal." On Windows, search for "Command Prompt" or "PowerShell."</div>
+    </div>
+
+    <div class="glossary-item">
+      <div class="glossary-term">virtual environment</div>
+      <div class="glossary-def">A private, isolated copy of Python and its tools that lives inside your project folder. It prevents conflicts with other software on your computer and keeps every coach's setup identical.</div>
+    </div>
+
+    <div class="glossary-item">
+      <div class="glossary-term">pip</div>
+      <div class="glossary-def">Python's built-in package installer. Running <code>pip install</code> downloads and installs a tool or library. Think of it like an app store for Python tools.</div>
+    </div>
+
+    <div class="glossary-item">
+      <div class="glossary-term">pybricksdev</div>
+      <div class="glossary-def">The command-line tool that connects to the SPIKE Hub over Bluetooth and sends your Python program to it. It is installed automatically when you run <code>pip install -r requirements.txt</code>.</div>
+    </div>
+
+    <div class="glossary-item">
+      <div class="glossary-term">interpreter</div>
+      <div class="glossary-def">The specific version of Python that VS Code uses to read and run your code. Selecting the <code>.venv</code> interpreter tells VS Code to use the project's private Python, not your system's.</div>
+    </div>
+
+    <div class="glossary-item">
+      <div class="glossary-term">launch.json</div>
+      <div class="glossary-def">A configuration file inside the <code>.vscode</code> folder that tells VS Code how to deploy your code to each robot. It lists each robot by name and contains the Bluetooth connection settings.</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══ FOOTER ════════════════════════════════════════════════════ -->
+<footer>
+  <div class="footer-left">Bolton Robotics · FIRST Lego League · Coaches Edition</div>
+  <div class="footer-right">spike_basecode · github.com/fssfll</div>
+</footer>
+
+</body>
+</html>

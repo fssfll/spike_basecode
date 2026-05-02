@@ -1,0 +1,1617 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bolton Robotics FLL: GitHub Quick Start Guide</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --red: #ED1C24;
+  --red-dark: #C41019;
+  --black: #1A1A1A;
+  --white: #FFFFFF;
+  --gray-light: #F5F5F5;
+  --gray-mid: #E0E0E0;
+  --gray: #9A9A9A;
+  --gray-dark: #4A4A4A;
+  --sidebar-width: 260px;
+  --font-display: 'DM Serif Display', Georgia, serif;
+  --font-body: 'DM Sans', system-ui, sans-serif;
+  --font-mono: 'DM Mono', 'Courier New', monospace;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: var(--font-body);
+  background: var(--gray-light);
+  color: var(--black);
+  height: 100vh;
+  max-height: 100vh;
+  overflow: hidden;
+  display: flex;
+  position: fixed;
+  width: 100%;
+  top: 0;
+  left: 0;
+}
+
+/* ── SIDEBAR ─────────────────────────────────────────── */
+#sidebar {
+  width: var(--sidebar-width);
+  min-width: var(--sidebar-width);
+  background: #FFFFFF;
+  border-right: 1px solid var(--gray-mid);
+  display: flex;
+  flex-direction: column;
+  transition: width 0.3s ease, min-width 0.3s ease;
+  overflow: hidden;
+  z-index: 100;
+}
+
+#sidebar.collapsed {
+  width: 0;
+  min-width: 0;
+}
+
+#sidebar-header {
+  padding: 20px 16px 16px;
+  border-bottom: 1px solid var(--gray-mid);
+  flex-shrink: 0;
+}
+
+#sidebar-title {
+  font-family: var(--font-body);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--gray-dark);
+  white-space: nowrap;
+}
+
+#sidebar-subtitle {
+  font-family: var(--font-body);
+  font-size: 11px;
+  color: var(--gray);
+  margin-top: 4px;
+  white-space: nowrap;
+}
+
+#sidebar-back {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--gray);
+  text-decoration: none;
+  margin-top: 10px;
+  transition: color 0.15s;
+}
+
+#sidebar-back:hover { color: var(--red); }
+
+#nav-list {
+  list-style: none;
+  overflow-y: auto;
+  flex: 1;
+  padding: 8px 0;
+}
+
+#nav-list li {
+  border-left: 3px solid transparent;
+  transition: all 0.2s ease;
+}
+
+#nav-list li.active {
+  border-left-color: var(--red);
+  background: rgba(237,28,36,0.08);
+}
+
+#nav-list li a {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 16px;
+  text-decoration: none;
+  color: var(--gray-dark);
+  font-size: 12px;
+  line-height: 1.4;
+  white-space: nowrap;
+  transition: color 0.2s;
+  cursor: pointer;
+}
+
+#nav-list li.active a,
+#nav-list li a:hover {
+  color: var(--black);
+}
+
+#nav-list li a .num {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--red);
+  min-width: 20px;
+  padding-top: 1px;
+}
+
+/* ── TOGGLE BUTTON ───────────────────────────────────── */
+#toggle-btn {
+  position: fixed;
+  top: 16px;
+  left: 16px;
+  z-index: 200;
+  background: var(--white);
+  border: 1px solid var(--gray-mid);
+  border-radius: 6px;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  color: var(--gray-dark);
+}
+
+#toggle-btn:hover { background: var(--gray-light); color: var(--black); }
+
+#sidebar:not(.collapsed) ~ #main-area #toggle-btn,
+body:not(.sidebar-collapsed) #toggle-btn {
+  left: calc(var(--sidebar-width) + 16px);
+}
+
+body.sidebar-collapsed #toggle-btn {
+  left: 16px;
+}
+
+/* ── MAIN AREA ───────────────────────────────────────── */
+#main-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  position: relative;
+  background: var(--gray-light);
+  min-height: 0;
+}
+
+/* ── SLIDE CONTAINER ─────────────────────────────────── */
+#slide-container {
+  flex: 1;
+  overflow: hidden;
+  position: relative;
+}
+
+.slide {
+  display: none;
+  width: 100%;
+  height: 100%;
+  background: var(--white);
+  position: absolute;
+  top: 0; left: 0;
+  overflow-y: auto;
+}
+
+.slide.active { display: flex; flex-direction: column; }
+
+/* ── SLIDE INNER LAYOUT ──────────────────────────────── */
+.slide-inner {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  min-height: 100%;
+}
+
+.slide-inner.full-width {
+  grid-template-columns: 1fr;
+}
+
+.slide-inner.title-layout {
+  grid-template-columns: 1fr;
+  place-items: center;
+  text-align: center;
+  background: var(--black);
+  color: var(--white);
+}
+
+.slide-content {
+  padding: 52px 56px 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.slide-visual {
+  background: var(--gray-light);
+  border-left: 1px solid var(--gray-mid);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  position: relative;
+}
+
+/* ── TYPOGRAPHY ──────────────────────────────────────── */
+.slide-section-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--red);
+  margin-bottom: 16px;
+}
+
+.slide-title {
+  font-family: var(--font-display);
+  font-size: clamp(24px, 3vw, 38px);
+  line-height: 1.15;
+  color: var(--black);
+  margin-bottom: 24px;
+}
+
+.slide-title em {
+  font-style: italic;
+  color: var(--red);
+}
+
+.slide-body {
+  font-size: 15px;
+  line-height: 1.7;
+  color: var(--gray-dark);
+  max-width: 480px;
+}
+
+.slide-body p { margin-bottom: 14px; }
+.slide-body p:last-child { margin-bottom: 0; }
+
+.slide-body strong {
+  color: var(--black);
+  font-weight: 600;
+}
+
+.slide-body .callout {
+  border-left: 3px solid var(--red);
+  padding: 12px 16px;
+  background: rgba(237,28,36,0.04);
+  margin: 16px 0;
+  font-size: 14px;
+  color: var(--black);
+  font-style: italic;
+}
+
+/* ── FOOTER ──────────────────────────────────────────── */
+#slide-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 24px;
+  background: var(--white);
+  border-top: 2px solid var(--red);
+  flex-shrink: 0;
+  height: 52px;
+  z-index: 60;
+}
+
+.footer-logo {
+  height: 24px;
+  opacity: 0.7;
+}
+
+#slide-counter {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--gray);
+  letter-spacing: 0.08em;
+}
+
+.footer-nav {
+  display: flex;
+  gap: 8px;
+}
+
+.nav-btn {
+  background: var(--red);
+  border: none;
+  border-radius: 6px;
+  width: 38px;
+  height: 38px;
+  cursor: pointer;
+  font-size: 18px;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s;
+  font-weight: bold;
+}
+
+.nav-btn:hover {
+  background: var(--red-dark);
+  transform: scale(1.05);
+}
+
+/* ── TITLE SLIDE ─────────────────────────────────────── */
+.title-slide-inner {
+  background: var(--white);
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px;
+  gap: 0;
+  border-top: 6px solid var(--red);
+}
+
+.title-logos {
+  display: flex;
+  align-items: center;
+  gap: 40px;
+  margin-bottom: 48px;
+}
+
+.title-logos img {
+  height: 80px;
+  object-fit: contain;
+}
+
+.title-divider {
+  width: 1px;
+  height: 60px;
+  background: var(--gray-mid);
+}
+
+.title-main {
+  font-family: var(--font-display);
+  font-size: clamp(28px, 4vw, 52px);
+  color: var(--black);
+  text-align: center;
+  line-height: 1.15;
+  margin-bottom: 16px;
+}
+
+.title-main span {
+  color: var(--red);
+}
+
+.title-sub {
+  font-family: var(--font-body);
+  font-size: 15px;
+  color: var(--gray-dark);
+  text-align: center;
+  letter-spacing: 0.06em;
+  margin-bottom: 48px;
+}
+
+.title-rule {
+  width: 60px;
+  height: 3px;
+  background: var(--red);
+  margin: 0 auto 48px;
+}
+
+.title-meta {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--gray);
+  text-align: center;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+/* ── SVG DIAGRAM STYLES ──────────────────────────────── */
+.diagram-wrap {
+  width: 100%;
+  max-width: 420px;
+}
+
+.diagram-wrap svg {
+  width: 100%;
+  height: auto;
+}
+
+.diagram-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  fill: var(--gray-dark);
+  letter-spacing: 0.06em;
+}
+
+.diagram-label-red {
+  fill: var(--red);
+  font-weight: 500;
+}
+
+/* ── WORKFLOW STEP CARDS ─────────────────────────────── */
+.step-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.step-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+}
+
+.step-num {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--red);
+  min-width: 24px;
+  padding-top: 2px;
+  font-weight: 500;
+}
+
+.step-text {
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--gray-dark);
+}
+
+.step-text strong {
+  color: var(--black);
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  margin-bottom: 2px;
+}
+
+/* ── COMMIT LOG ──────────────────────────────────────── */
+.commit-log {
+  width: 100%;
+  max-width: 380px;
+  font-family: var(--font-mono);
+}
+
+.commit-entry {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--gray-mid);
+}
+
+.commit-entry:last-child { border-bottom: none; }
+
+.commit-hash {
+  font-size: 10px;
+  color: var(--red);
+  letter-spacing: 0.06em;
+}
+
+.commit-msg {
+  font-size: 12px;
+  color: var(--black);
+  line-height: 1.5;
+}
+
+.commit-meta {
+  font-size: 10px;
+  color: var(--gray);
+}
+
+/* ── CONTRAST TABLE ──────────────────────────────────── */
+.contrast-table {
+  width: 100%;
+  max-width: 380px;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.contrast-table th {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 8px 12px;
+  text-align: left;
+}
+
+.contrast-table th.good { color: #1a7a1a; background: #f0faf0; border-bottom: 2px solid #1a7a1a; }
+.contrast-table th.bad { color: #999; background: var(--gray-light); border-bottom: 2px solid var(--gray-mid); }
+
+.contrast-table td {
+  padding: 10px 12px;
+  vertical-align: top;
+  line-height: 1.5;
+  border-bottom: 1px solid var(--gray-mid);
+}
+
+.contrast-table td.good {
+  color: var(--black);
+  background: #fafff a;
+}
+
+.contrast-table td.bad {
+  color: var(--gray);
+  background: #fafafa;
+  font-style: italic;
+}
+
+.contrast-table code {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  background: var(--gray-light);
+  padding: 2px 5px;
+  border-radius: 3px;
+}
+
+/* ── TAG EXAMPLE ─────────────────────────────────────── */
+.tag-example {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  background: var(--black);
+  color: #7ec8a0;
+  padding: 16px 20px;
+  border-radius: 6px;
+  margin: 16px 0;
+  line-height: 1.8;
+}
+
+.tag-example .tag-label {
+  color: var(--gray);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  display: block;
+  margin-bottom: 6px;
+}
+
+/* ── MARGIN NAV ──────────────────────────────────────── */
+.margin-nav {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 60px;
+  z-index: 50;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.margin-nav:hover {
+  opacity: 1;
+  background: rgba(237,28,36,0.06);
+}
+
+.margin-nav-left { left: 0; }
+.margin-nav-right { right: 0; }
+
+.margin-nav svg {
+  color: var(--red);
+  opacity: 0.5;
+}
+
+.margin-nav:hover svg {
+  opacity: 1;
+}
+
+/* ── PRINT ───────────────────────────────────────────── */
+@media print {
+  body { overflow: auto; height: auto; background: white; }
+  #sidebar { display: none; }
+  #toggle-btn { display: none; }
+  #main-area { height: auto; overflow: visible; }
+  #slide-container { height: auto; overflow: visible; }
+  #slide-footer { display: none; }
+  .slide { display: flex !important; position: relative; page-break-after: always; height: 100vh; }
+}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<nav id="sidebar">
+  <div id="sidebar-header">
+    <div id="sidebar-title">Bolton Robotics FLL</div>
+    <div id="sidebar-subtitle">GitHub Quick Start Guide</div>
+    <a id="sidebar-back" href="index.html">&#8592; All Resources</a>
+  </div>
+  <ul id="nav-list">
+    <li class="active"><a onclick="goTo(0)"><span class="num">00</span>Title</a></li>
+    <li><a onclick="goTo(1)"><span class="num">01</span>The Problem</a></li>
+    <li><a onclick="goTo(2)"><span class="num">02</span>What Is Source Control?</a></li>
+    <li><a onclick="goTo(3)"><span class="num">03</span>Git &amp; GitHub</a></li>
+    <li><a onclick="goTo(4)"><span class="num">04</span>Git Vocabulary</a></li>
+    <li><a onclick="goTo(5)"><span class="num">05</span>Student Workflow</a></li>
+    <li><a onclick="goTo(6)"><span class="num">06</span>Coach Workflow</a></li>
+    <li><a onclick="goTo(7)"><span class="num">07</span>The FLL Scenario</a></li>
+    <li><a onclick="goTo(8)"><span class="num">08</span>Undoing a Commit</a></li>
+    <li><a onclick="goTo(9)"><span class="num">09</span>Viewing History</a></li>
+    <li><a onclick="goTo(10)"><span class="num">10</span>Competition Day</a></li>
+    <li><a onclick="goTo(11)"><span class="num">11</span>Tagging a Release</a></li>
+    <li><a onclick="goTo(12)"><span class="num">12</span>Ground Rules</a></li>
+    <li><a onclick="goTo(13)"><span class="num">13</span>Try It</a></li>
+  </ul>
+</nav>
+
+<!-- TOGGLE BUTTON -->
+<button id="toggle-btn" onclick="toggleSidebar()" title="Toggle menu">
+  <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+    <rect y="2" width="16" height="2" rx="1"/>
+    <rect y="7" width="16" height="2" rx="1"/>
+    <rect y="12" width="16" height="2" rx="1"/>
+  </svg>
+</button>
+
+<!-- MAIN AREA -->
+<div id="main-area">
+  <div id="slide-container" style="position:relative;">
+    <div class="margin-nav margin-nav-left" onclick="prevSlide()" title="Previous slide">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+    </div>
+    <div class="margin-nav margin-nav-right" onclick="nextSlide()" title="Next slide">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+    </div>
+
+    <!-- SLIDE 0: TITLE -->
+    <div class="slide active" id="slide-0">
+      <div class="title-slide-inner">
+        <div class="title-logos">
+          <img src="data:image/jpeg;base64,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" alt="Bolton Robotics Eagle">
+          <div class="title-divider"></div>
+          <img src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCADIALYDASIAAhEBAxEB/8QAHQABAAIDAQEBAQAAAAAAAAAAAAcIBAUGAwECCf/EAFIQAAEDAwEEBAYOBQkGBwAAAAECAwQABREGBxIhMRNBUWEIFCJxgZEVFhcjMlJidJShsbLB0TZCVFXSGCQ0VnKCouLwNTdDY8LhJjNEU5KVs//EABsBAQACAwEBAAAAAAAAAAAAAAAEBQIDBgEH/8QAOxEAAQMCAwQIBgACCwAAAAAAAQACAwQRBSExEhNBUQYUImFxgZGxMqHB0eHwFmIVIzM0NTZCUlOy8f/aAAwDAQACEQMRAD8AtTSlKIlKUoiUpUfbTbtLiTIUaFJdYy2pa+jWU5ycDOPMaIpBpUAaJ2oyLTfZMO+vOyLU68Ql1RKlxznGe0p7R1cxU9xn2pLDb8dxDrLiQpC0HIUDyINaopmyX2eCsK/DZ6At3oycLg8P/QvSlKVtVelKUoiUpXnJfaix3H5DiWmW0la1rOAkDmSaaoTZelKrjrja/cpWo2F6aeMe2w3Mo3h/SjyJWPi9g9PPlMez7WsDWVr6aMQzNaAEiMo+U2e0dqT1Gpk9BNDGJHDI/LxUKCvhnkMbTmPn4Lq6UpUNTUpSlESlKURKUpREpSlESlKURKhnaTMC9STVZ8mO2EepOT9ZqZqrnrqb0qLvKzxecWB6VYH1Vi92y0u5KRSQ7+dkX+4gepUZKUVKKjzJzUg7L9okjSz6YVwK37MtXFPNTBP6ye7tT6q4ODHXLmx4zSSpx5xLaUjmSTgCtlqCyP2mQsFKiyFFOVDBSfiq7DVFHvG/1jOC+uV/VJyKGp1eMh4cjz5K3cGXHnxGpUN5D0d1IWhxByFDtFe9Ve2aa/laSliPI35FodVlxnPFs/HR39o6/PUvXPaRHcbBsTSZCFDIfdyE+hPP14q4gqGzDLVfM8XweXDJLOzYdD9D3qQ6VDbmq9QzVEtSXQOxhocPUDX49sOo4gLjkuYlKeJLrfADvyK3qnUyvOIZaW66tKG0AqUpRwEgcyTVadr20hepZC7XZ3FIsravKWOBkqHWfk9g6+Z6qwtfbSrrqGEbSl9AghXvq207pf7j8nu664q021+5ywywMDmtZ5JHaa6KgoWwN6xPl9Pyudr6507urwZ/X8LxjRJEpLqo7S3EtJ3llI5Csiw3idYbozcLW+piU0eChxBHWkjrB7KnDRez9x+zKWyoRmt0lkrHF5fxj3d9RxrXST8OU+tlhTUhs+/MY5/KTWyHFY5pDG8WadPytU2FSQxiRhu4a/hT9s413B1lbd5vdYuTIHjEUnin5Se1J+rka7GqSWe6TLNcmJ9tfWxKZVvIWn7COsHrFWj2Z6/h6xgdGvcj3ZlPv8fPA/LR2p+z66r8Qw4wHeR/D7Kxw/ERON3J8Xuu4pSlVKtkpSlESlKURKUpREpSlEWFepPilomyM46Nlah58cKrLrJ3ctrTeeLjgz6BVgdosnxfSslPW8pLQ9JyfqBqt+tncyozXxUFR9J/7VGq3bMRV70bh3uIx91z6D7rL2SwfZDaFZ0EZS04X1eZCSftxU9660gze4zj8ZtHjm7hSSODw7D39hqK/B6hheoLpPUPJixd0HsKj+STVg0kKSFA5BGa10LbRX5qZ0tqC6vDWn4APXX6qoWo7C7a3lqQhfQhRSoKHlNnsNe+iNSJ07d23pURubCJ99YcGcfKTnhvDv51Pd+0MmZb33WSFXFbjjqt4+S6FKJ3T2cMVAWpdPuW91xxhtQaSSHGzzaP5Vpnp3RHeRK2wjG4sRj6jiGZOQJ4/Y8jx8dbT2G6W662hmdanWlw1pyCgboT2gjqI6xUEbZNpRu63rHYHiLak7siQg/0gj9UH4n2+bnxumJVxXHuNqhz34seYyelQg+SrGOf2HHVXMzYj0KQtiQgocT1dRHaO6unwBsVSN6/4hw+v7ovnXTCmlwqoNLGbsOd/Hh+6r1tdveuUtLEdPHmpR5JHaalqxWBdmtUecmCp23pdG+tY/8ANIPHPXg8s8uquU2WXG1N3lmBfVpjxHV56YDAUrqSs9QPb1fXVplxY7sIxS0gxlI3NwDhu45VtxeaUybtws3h3qsweGIR7xpu7j3L7BeakQ2Ho+OhcQFIx2EcK1GqdOx79FwrDUtA96eA5dx7RWfYoKrbaY8NSt/oUlIV2jJx9WKy0LC1uJB+AcH1A/jVMrlVZ1zo+REmPKbYLUtHFxkclj4yf9ca4q2z5VrnszIDy48phW8hxBwUn/XVVn9sVys1r0909z4zzkQ0I+GtXZ/Z7fzqrkuQuVJdfd3d9xW8d0YFdPhMkssRbILt4H6Ll8WjiilDozZ3EfVWj2XbRIur4gjStyPeWk5cZzgOgfro7u0dXmrv6q5spsD3tktU91C98PoW02nOcZ4qPdjNWjqkrmRMmIhOSvKF8r4QZhmlKUqGpiUpSiJSlKIlKUoi4DazJ3YtvjA/CWpwjzDA+2q9aod6W9PjqRhHqFTbtQk9LqJtnPBhlIPnJJ+zFQHOd6ea+6f11qP11AxB1mBq7LoZDtVEkvIW9T+FOWwliPB0XdJ8x5thEqQW99xWBhKcfaTUgaHuyLpY2klYMiOA04O3HJXpH41WaNqJUO1R4kdsqU2Cd5w+SCTk4FdRoDVkqLK6VDg8bRneQeCXUdhFZ008YDYwc1FxzCqx0ktc9vZ2vO2gNuWimHaTBvUi0qfsS3XXGknfhoXudKO0EcSR2ddVnutznynVty1rb3ThTWCndPYRzz56tfp7UkC9tDoHA3Ix5TCz5Q83aO8Vjak0VYNRrDl0t7a3x/xmyUOeYqHP01lUwvlHZdZR8DxWmw95M8W1/NxHrl6WPiqq2ePPk3Bpu0svvS8+ShlJUr1Dq89SHqPRlyXZIz18hCK+sYStCgvo1discs9lT1ZbLbbJGEe1QmIrXWG04J855n01lyo7UqO4xIbS4y4N1SFDIIrOjjfSnba7NYY/i8eMWZugAOJ1/fXxVJbhCfgSVMSUbqx6iO0d1WD2AXTUUy0uR7lHW5Z2U4iy3ThWfiDPwkjt6uXHq69rZ7p0OoclQhMU2reb8ZO8E+jkfTmuimzIdqh9JJdbjsIGBngPMB+Aq9qsTFRCIy3Pn9lxlLhhp5jI12XL7r2lyGokZ2RIWENNpKlKPUBXCv61iae0lIvd0yXZkhxcaMD5bnUlI7gAMnqrlNoeuBLjrxvNW5s+SjOFvK6s/l1c6hbUV8l32cmRMVhDaA0y0n4LTY5JT+J6zxrXh9Aal2074R81sxCvFM3Zb8R+S/WqNQT9TXh643R3feXwSkfBbT1JSOoD/vW60Xpd24SGHnWFOFah0DGOKz2nury0dppy4vsvPMqcStQDLIHF0/lVltGaYascYOvhK57gwpQ5IHxU/nU7EK8Rjq8Hn9goOHUBkPWJ/L7lemkNNM2KLvubrk5we+OfFHxU93210VKVz66BKUpREpSlESlKURKUoeVEUD6+nb93vMnOQgrSk/2Ruj7Kh3z1Ym8bMZdxbebN0aQl9eVr6IkgE5OBmt7pbZtp3T+46iL45LT/AMeVhZB7hyHoFQqmnfM8W0C6vAsZpsLpnl4Je46DkBlc+Z5qBdL7P9Q6jKVxIZYiq/8AUyctox2jrV6BUw6S2QWi0KbkXR5y4y08QMlttJ7kg5PpNSaBilZxUkceepUXEOktZWAsB2GngPqdfZRhqHQsuG6ZNlKnmgd4N5w4jzHr+2tdC1hfLWvoJC+m3eBblIO8PTwNTBWNNgRJyN2ZGZfH/MQDipS55cGxtIUB/OLbk9qHvzFejm0lvd97ti8/KeH5Vvn9FWJ05EMtn5Dih+NeaNDWJKsmM4ruU6r86IuPn7QLo+CmM3Hig8iAVq+vh9VaS4xbzKjG5XBuW4znHTOg8M9g6h6MVMECxWuAQqJBYbUP1t3KvWeNbB1tDram3EpWhQwpKhkEdlEVNNVqnm4lNw+CM9EE/A3e78azdI6ccuT7bz7SltKUA20BxdP5fbUxa/0GhHvsaOZMBSwejAJU0rPADrweX1Guv0NpRFnYRKloSZyk4SkcmR2Dv7T6KtnYo7cCKMWP7oqhuFN35lkNx+6r10TpZuyxxIkpSqetODjk0Pij8TXVUpVSrdKUpREpSlESlKURKUpREoSACTwApXL7Ubx7A7PNQXIHC2YbgbPy1DdT9ahRFD8zwm4bMt9prTMh1ttxSEueOJG+ASAcbvDPOvH+U/G/qrI+mp/hqsgGAB2cKkzQ+xjUmstOsXq2v21mI8paUCS6tKjundJwEnhkGi9Ut2bwkG7rd4NvjaVkdNLfQwj+ep5qUAP1e+t7tK26RNE6tkWL2EdnrYbQpbqJIbAKhndxunkMeuuQ2X7Cb9p3XdqvF7lWt2FCWp4oYdWpZWEkJ4FIHAkHn1VBm0W7+z2u7/cwreRImOFB+QDup+pIoisvoTb2jV2rbdY42mn2Vy1lJdMtKg2kJKiojd44ArE1r4RDFg1Hc7RDsC5ioT6mC+qWEJWpPAkAJJ55HoqOfBfitsamvuopI/m9mtrjm8eQUr/KhVQ9OlOTpsiW+SXZDinlk9qiVH7aIp/X4Ttz3juaahBPfLXn7tbO0eE6yp1Kbxpt1tsni5FkhZH91QGfXUdbLdjk7X+nZV2YujEBDb6o7aHWSvpCACTkEYGTjrqNbpCdtlzmQJO708V5bDm6cjeSopOD2ZFEX9AtG6rs+sbMi52GUH45O6tJG6ttXWlSTxBrRbQtqWmtDHobpKU9cCneTCjDfdx1FXHCR5yKq/sR1fM0g1rCbFypDdpLqUH4PTBxCG1Eedw+io3nS5E+Y/LmvOPyn1lx11w5UtR5kmiKxFw8J18vH2O0w2GuoyJh3j6EpwK3uz7wgH9T6nttkkab6N2a6Gg6xK3ggYJKikpHAAE86izZfsZe15p5d0Z1DBikLUgRg2XXEYOMrAI3c9XdXbaO2L6p0Zdrxc2vE7hJbtj7VtVHd3CZDgCASF43cJKjzoi2108JiDEuUuNH04/IZZeW2h4S0pDgSogKxu8M4zWL/Kfjf1VkfTU/w1FM/Ytru3QJEyZaG240ZpTrrhltHdSkZJ+F2Co6HEZois3/ACn439VZH01P8NdXsy22o13qtqysafeibzTjy31SgsISkdgSOZIHpqtGjtnGqNY296dp62iVFad6FS1PIb8vAOPKIzwIqffBw2aX7R99u9y1LBRFW5HRHj4eQ5nKt5fwScfBTRFPtKUovEpSlESlKURKhHws7v4ls+iW5CsOXGYlJHahsFZ+vdqbqqZ4XF48b1ra7UhWUQYfSKHYtxX8KU+uiKCa66zbR9YWW2R7dar/AC4sJhO60y2EbqBnPDKe0mtdoWze2HWdktKgSiXLbbcA+JnKv8INXE9xHZ5/V1v6Q9/HReqJdlOu9US9Ja6v+oLzKmRLbb+jYQ7ugB9YODwA4/BHpqvAyAMnJ6zVpPCAtVj0DsqNk01CTBbu89BcQlalb4QN5Ryok/qpFVbJwCezjRFN2kv/AA54NOqLnxRIvksQmj2oGEfZ0lQjU37ax7X9lezzSqTuueLmdIT8op6/7zi/VUO2WA5dLzAt7IJclSG2EgdqlAfjRFJuldtM7Sez+Pp2wWphmUjpCue64VneWokqCMAZGRjJPKoq9+mS8DpH5LyycAFS3FE9g4kkmt9tE005pHWl1srm8URnT0K1c1tK4oV6iPSDUgeDFqiJZdci2XBiOW7mA2zIW2nfaeHwQFYyAriMduKIpF2UbGHG9nF9j6kSqLc78wGwjGVRW0neRkfG3sKI7gKr1rjRd80VdFQ79DW0CSGpCRll4dqFcvRzHWKuDtn2ke51bLXIahImvzJJb6FbhR72lJKiCAeOd0cuuuHX4Qmib1anI2oLHcShwYXGcYbfbV6d78BRFV+0XSfZpyJtpmSIUtHwXWFlCh6uY7jVrNgG16VrCQuwajDZu7bRdZkoTuiQkfCCk8gsZzw4EdmKq1qaTbZmoJ8mxwlQLY66VR4ylbxbR2Z/1jOKlTwVbFKn7RjdkIUIdtjr6RzHArcG6lPnxvH0URTr4Rt49iNk13CVbrs3chI/vq8r/CFVSPrqyvhhXjCdO2VCuZcmOJ83kI+1dVyt0Ny43CLCYBLsl1DCAO1SgkfbRFdjweLP7D7J7KFp3XZiVTF5/wCYrI/w7tSTWBaERIUOPbIrrR8UZQyG0qBUlKQAMjq6qz6LxKUpREpSlESlKURKq5tQ2O631Zr683mO1bzGkPAMb8rCujSkJTkY4cB9dWjpRFXDYlsa1DpbXse86hbhJjRmXOj6F/pCXFDdHDA6iqrH1y20TVntPszM/wAT8b6R8M7nSbmMgnOcHsrU7ONontzuEuL7GmH4u0Hd7pt/eycY5CtZlYH7BOanNw2pfTmra3sDjce17rj/AAhtn2qNeXKzpsSIioMNpwq6Z/oz0iyM8MHqSOPfUW2nwe9Y+ysL2QbtyYfToL5TK3iG94b2BjjwzVwaj3aLtH9pt2jQvYwy+mY6bf6bcx5RGMYPZXr3tjG07RaqSkmrJN1ALu8vqo325bLNX611v4/aWoPsaxGbjxw7J3DgZKuGOHFR9VanZVsQ1NY9f2i635uCmBCcU8ropG+orCTucMfGI9Vdn7uo/q+fpf8Alp7uo/q+fpf+WtPXIeatf4axP/i+bfuvLwgtlF01rdrXdNOIimW20qPJDzvR7yQcoIODkjKh6qihjYBr9h5t5hFtbdbUFoWmZgpUDkEeT1GrU6L1IjUmmWbw4wIaFleUKc3gkJJGSrA7M1w2p9tFugyFx7JDVcVJOC+pfRtE/J4Ekd/CtjpmNaHE5FQoMKq6iZ0EbLubkeQ89Fym2bZvrjXbdgmoTbuniQQ0/F8YKT05OXFJON0g4TjlURObEtoLbm57X1K70yWiPXvVN0HbnJDw8fsjRa6+gfIUPWMGpW0jqm16qgGTanioowHWljC2z2KH48q8jqI5DZpWdbg9ZQt252WbzyI+SrHpTwc9TXCShWoZEW0xARvhCw88R3AeSPOT6Ks7o3S1q0fY2rVY4/QxkHeUpRytxZ5rWesmvurNT2zS1v8AGrq9uBRw20gZW4exI/HkKiedtzkF4+IWVoNdRffJUfUMCklRHGbOKUWD1lc3bgZcc8gPmtJtu2Vax1tr1+521uCbehhtiP0sndVgDJyMcPKUa1WzDYbqeza9s10vrcBMCE906+ikb6ipIJTgY+NipI01tqt82Qhi+QlW/eOOnQvpGx/a4Agd/Gu81PqaLYrama5h1gpCy4k5SEkgA8M5yVDlXrJmPG0CtdRhVXTSiGVhBOnf4HRc7p/Rtxt+sHrk9LKoygjCN8lKSlJBUkdRXnKs/XUg1jW6WJsRDwQWychSD1EHBFZNbVAILTYpSlKLxKUpREpSlESlKURRb4Q/6GxPnqPuKrlPBx/SC7/NUffrq/CH/Q2J89R9xVcn4OP6QXf5qj79Vz/70F3FJ/l2TxPuFP1V78Iv9LLb8y/61VYSq9+EX+llt+Zf9aq3Vv8AZFVfRT/EW+B9l92Y6f0Zc9NKf1K/GROEhaQHJnRHcAGPJyO/jXW+07Zj+1Qf/sj/ABVGOj9m911XaDcYEiE2yHVNbrylBWRjPIHhxreHYjqDB/ntr/8Amv8AhqLHtbAtGCuhrer9YftVzmG+gJy7lu9rsyJpjR1t05p0luHN3nlFLhXlrOcBXWFE+oVy+yLQbOrZEmXc1OJt0YhG42d0urIzjPUAMZ84rL24W1+3HS7T+D0NuEYqT8ErRjOPWK7PwdpTS9LT4ySOmallah14UkYP1H1V6GiSp2XDIcFrdM+jwPfU7u045u45uIv48F+9XbILM/aH16eYcjXFtBU0npSpDhH6p3jwz21zWzPRur9NauhzHrf0cJeWpOH0EdGRzwDxwcGtpteb1gdTIXp32X8REZO8YqlBG9lWc468YrgNHapv8nV1mYkXq4ONOTGkLQp9RCgVDII7K9kMbZR2SCsaJldPhz7zNe1zSSHXLhlpr6XWHtNvzuoNYT31LKo7Dio8dPUlCTjh5zk+mpZ0ZsjsyLLHe1A05KnvIC1p6RSEtZGd0AYyR1k1BNwQqJe5KH0neZkrCwe5Zz9lXHhvtyojMhhQU06hK0EciCMivKRjZXuc/Mr3pHUy0FNBBSuLWkajLS1s/O/eq3bXNCM6SlRpVsW4q3SiUhLh3lNLAzjPWCOXmNdjsNnN36xyrNcwXTb1Bcck8UtrzlPmBHLvHYKzfCLlNI0zboqiOmdl76R14Sk5P+IVzvg4MrN6vL4B6NMdCCe8qJH2GvQ0R1Oy3QrGSaSswAzTntNOR45G3tkp2ix2orCGY6AhpAwEivWlKs1wRN8ylKUovEpSlESlKURKUpRFFvhEHGjYmf21H3FVCOltUXPS8l9+zvtNOvIDaytAXkA566txOgxJ7QanRWJLYO8EPNhYB7cGsD2tWL9zW36Kj8qhTUznybbXWXU4Zj8FJR9Umi2xc8reir17rurf26L9GRWDtCu8q+R9OXG5OIXKegqK1JSEg4eWBwHcKsn7WrF+5rb9FR+Vejmn7O4htDlqgKS2N1AVHQQkZzgcOHEk1iaWRwIc+6kR9IqGGRskNNskcrDgRyVYNNa+vum7cYNplMNxi4XN1bKVneOM8T5q23uu6u/bov0ZFWG9rVi/c1t+io/KvntasX7mtv0VH5V4KWUCwespOkOHSuL30oJOpy+yjWJAnbUdl4fnvNKu7ElxUdwICE+Tw3TjqI4Z81RNarnfdD31wsdJCnIG46y8jIWOwg8x2Eeg1bOFDjQWOhhR2Y7OSdxpAQnJ68Cse62a23dsIukGNLSOXTNhWPMTyrOSlLrOB7Q4qLR9ImQGSJ8V4XEkN5X4crdyrhftqWpb1BXCU6xFZdG4sRmylSwerJJPHurTaWhyLfr2yRZrSmJCJjBU2vgpOSCMjzEVZq16S0/apAft9ohMPA5DiWhvDzE8qz3LRbXZolu2+IuWCFB5TKSvI5HexnhWHU3uIc91ypX8TUsLHQ00Gy0g8gblQftr0LKjXV+/2thT0OQd+ShsZLS+tWPinnnqOa5fS20rUGnbcmDEdYkREcG0SEFXR9wIIOO6rTHlxrn5+jNN3B4uy7JBcdPEq6EAnz4xWclI7b24nWutFH0iiNOKavi3gbofDTX3VY7tdL3rW+tqk9JNnL97aZZRwSOxKRyHf66sZsu0l7UtOBiRuqnyFdLJUniArGAkHrAH15roLTZbZaEFFrgRogPPoWwknzkcTWwrOCm3bttxuVFxbHuuxCmgZsRjhz/HclKUqUudSlKURKUpRErTa0cWzpC9ONLUhxEN5SVJOCkhBwQa3NaPXX6F335i99w1i/4St9NnMzxHuq8bOL5dZGurG1Iuc51pclIUhchakqGDwIJ41aMcqqXsw/T+wfOk/YatoOVQ6AksN+a6fpixrKqMNFuz9So328zJMHRzDsKQ9HcMxCStpZQcbquGRUG2ydqm6urbtsu8S3EJ3lJZecWUjlk4NTX4Qv6Ex/nrf3VVD+zzWC9G3GVLbhpll9oNbpc3MeVnPI1oqiN9ZxsFb9H2O/ooviYHPubA2z04r28R19/7Oo/W7+dSlsPY1Ay9d/bCi5JBS10Xjm/8rO7veitJ7ub/AO4W/pJ/hqStnWqV6usC7i5FEUpfUz0YXv8AIDjnA7a2U7Y9sbLiSoONT1wpHNqKdrGmwuCL634HuXLbedRvWmxRIEGQ4zLmObxW2spUltHE8RxGSQPXUQaU1ldLXqO3zJVymvRm3h0zbj6lJUg8FcCew59FZW1u9m/a5mlk77EY+KMgcc7p4486ia/W03SftXcsoSnCZEJHSnteT8P7RWiaRz3l7dArjC6OnpqSKknHblBPyz9ArRoUlaEqQQpJGQR1ioV2rbT5US4P2bTboaUydyRLAyre60o7MdZ7eVdNs41MqZsuclqXvS7Yw40vPPLacpPpTu1X7TcP2a1NbYkhRPjkpCHFZ4neV5X41IqZyWtDP9SosCweNk80lWLiLhw45+g+azY8DVN7bVOYYvE5vOS+npFg+Y9forZaX1/qHTE1KFyX5MZCt12JKUT5wCeKT/rFWYlvwrDZnH3AI8CG1vEITwQhI6gKh7VFy2ZakuqrjPnTkSVICFFhtaArHIkbvPv7q1vp91YtfY96nUuNDEdpk1KXRfyi9v3utZbXa9qIzdntou1llvsNypKVBTSyhWNxWUnHYRg+atV4P1znz71dkzpsqSlMdBSHnVLAO8eWTWv12bGNlUBvTEiQ/bmrmUhT+d4K3FEjiBw416eDh/t28fNkffNe7RNQ25/bLA08ceCTBrbWcbXFjbaGvepX2lvOx9B3t6O4tp1EZRStCilSTw4gjlUGbKb1dJW0C0syblNeZUte8hx9SknyFcwTU37Uv93t++aq/CoA2Qf7x7P/AG1//mqs6kkTsHh7rRgMbXYTUkjPtf8AVa+93+8ovdwQi7XBKUyXQAJKwAN88OdZ4ha9UAQ1qMg8QQXfzrnb9wv1y+dO/fNSsztxfbaQj2CbO6kDPjJ6v7tQ2FpJ3jiF0tWKiKOPqcDX3Gd7C2luS5O3wtdifFLrOoujDyN7eLuMbwznjyxVoaiXSG1t7UGpINrVZ0MJkrKS4Hyrdwknlu91S1VlStYASw3XDdIZah8jGVMQYQL5cb+HglKUqUudStHrr9C778xe+4a3lavVMN64abukOKAp+RFcabBOAVKSQONYvzaVupyGzMJ0uPdVb2cvsxdcWN+S6hpluQlS3FqCUpGDxJPKrPDVVg/fdt+ko/OoA9yHVuP6LE+kpr57kGrP2SJ9JTVZA6aEWDF9AxeHDMUlbK+pDbC2RHNd9t0ukC56IaNumxpQbnNhfQuhe7lK8ZxyqPdkMLT068TkapEQxkxwWvGXdwb+8ORyOOK3kXZfqZvSdwgKjRhJelsPIAkJwUpSsHj/AHhWo9yHVv7LE+kpryQSOkEhZ5LKjfQwUb6JtSBnk64B4H8KUPa/sw+LZPpf+asufeNOaT0Tdl6XeggMoK0tRngv31fkpJ4nrx6qiP3INWfskT6SmvRGyfWCGXGkx4obcKSsCSnjjOPtNbBJINI7KE6hoXkb2u2wCDYuyOfjyXBwZi4VwjzAG3HGXUugOjKVKBzx7eNdHrHXtz1bEjx7o3BAYcLiFMoKVAkYI4qPD8qlrZHs9kWBVwk6iixlyHd1tpGUugJHEnlzJx6qkGbYLXLhvx1wIoQ6hTZKWUggEY4cKxjpJCzW1+C313SSiZVgiLb2NHA89bZKAdidzAu9wsMhe7Hu8ZbQzyDgScetJV6hXFxVydNalZW62RKt0oFSDw8pCuI9OPrrubfst1jartHmQmYpcivBxtfjKRvbp4ev8akXaNs1Z1WRcYS0QrvuAL3uKHeHJWORHLeFYCCR0YyzapMuLUMFYXbYMcosbZ2IyztwINvJb5262PWOlJLTF0ZRHmMFtZ6RIW1kcQQeRHfVc9c2uyWe5oh2C5u3IJSemdO7uBWeCUkc++tnI2V6uZeKBakuj47bzZSfWQa3kfYzezY5Eh9bAuWUhiKlwYxnyipXLlyAr2XezixZmOK1YeKDCXFzKoFjj8OXHK5ty8lq0x1vbD1OoBIYvJUruBQE59ZFZmwa9QrTqeW1cH0MJlsBDa3CEp3wrOCTyyM1JezzRb8LQc6w6kYbxKecUpDbgV5JCcEEciCM+io01Bsd1BBkr9igzcYufJUFhC8fKSrhnzGvTFIwskaL2CxjxGiq21FDNIGhziQeBBsddNVJ+17UNtjaHuUbxxhcmW30LTSFhSlEkZOB1AZ41D2xaMuRtGtqkAlLKXHVHsAQR9pFfIuyvVz7oQbWlgHmt19AA9RJqaNmOgWtHxnXpDqZNzkAJccSMJQkcd1PXz4k9dZhsk8oe5tgFHkmosIw6SmhlEjn30txFuF7WHeq3X7/AG/cs/tTv3zU/R7BsyLDZcTZN8pBP8768f2qj27bJ9VSbrNfajRS26+44kmQkcCokfbWJ7kGrP2SJ9JTWmNskZN2XurGtno61kYFXu9kcHa6a58FLdrt2zq1z2ZtvcszMpo5bcTLGUnGOtXfXfjlwqs7eyHViXEkxImAQf6Sntqy6BhAB6hU+nc4ggt2Vx2NwQxuYYqjek3vc3ta1vcr7SlKkqjSlKURKUpREpSlESlKURKUpREpSlESlKURKUpREpSlESlKURKUpREpSlEX/9k=" alt="FIRST Lego League">
+        </div>
+        <div class="title-main">Bolton Robotics FLL:<br><span>GitHub Quick Start</span> Guide</div>
+        <div class="title-rule"></div>
+        <div class="title-sub">Using Git &amp; GitHub Desktop to code as a team</div>
+        <div class="title-meta">Bolton Robotics &nbsp;·&nbsp; FSS FLL Program &nbsp;·&nbsp; 2025–2026 Season</div>
+      </div>
+    </div>
+
+    <!-- SLIDE 1: THE PROBLEM -->
+    <div class="slide" id="slide-1">
+      <div class="slide-inner">
+        <div class="slide-content">
+          <div class="slide-section-label">Section 01 — The Problem</div>
+          <h1 class="slide-title">The way we've been doing it <em>has real costs.</em></h1>
+          <div class="slide-body">
+            <p>Every practice, the same ritual: import the zip file from the thumb drive, code, then hope someone remembers to export a new zip before leaving. The code lives on a single USB stick — one misplaced drive away from chaos.</p>
+            <p><strong>The failure modes are well-known:</strong> forgot to export at the end of practice; imported the wrong backup file; can't remember which zip is newest; the thumb drive is missing entirely.</p>
+            <div class="callout">This is a system problem, not a people problem. The system makes failure easy.</div>
+          </div>
+        </div>
+        <div class="slide-visual">
+          <!-- Thumb drive failure diagram -->
+          <div class="diagram-wrap">
+            <svg viewBox="0 0 360 300" xmlns="http://www.w3.org/2000/svg" font-family="DM Mono, monospace">
+              <!-- Step 1: Realistic Thumb Drive -->
+              <rect x="22" y="108" width="52" height="72" rx="6" fill="#d0d4dc" stroke="#a0a4b0" stroke-width="1.5"/>
+              <rect x="26" y="118" width="44" height="4" rx="2" fill="#b8bcc8"/>
+              <rect x="26" y="126" width="44" height="4" rx="2" fill="#b8bcc8"/>
+              <rect x="26" y="134" width="44" height="4" rx="2" fill="#b8bcc8"/>
+              <rect x="30" y="148" width="36" height="26" rx="3" fill="#888fa0" stroke="#6a707e" stroke-width="1"/>
+              <rect x="34" y="162" width="28" height="12" rx="2" fill="#c0c8d8" stroke="#9098a8" stroke-width="1"/>
+              <circle cx="48" cy="113" r="4" fill="none" stroke="#6a707e" stroke-width="1.2"/>
+              <line x1="48" y1="117" x2="48" y2="122" stroke="#6a707e" stroke-width="1.2"/>
+              <line x1="44" y1="122" x2="52" y2="122" stroke="#6a707e" stroke-width="1.2"/>
+              <line x1="44" y1="122" x2="44" y2="119" stroke="#6a707e" stroke-width="1.2"/>
+              <line x1="52" y1="122" x2="52" y2="125" stroke="#6a707e" stroke-width="1.2"/>
+              <circle cx="44" cy="119" r="1.5" fill="#6a707e"/>
+              <rect x="50" y="123" width="4" height="3" rx="1" fill="#6a707e"/>
+              <circle cx="58" cy="143" r="3" fill="#44cc66" opacity="0.9"/>
+              <text x="48" y="205" text-anchor="middle" font-size="10" fill="#666">Thumb Drive</text>
+
+              <!-- Arrow 1 -->
+              <line x1="76" y1="152" x2="110" y2="152" stroke="#ccc" stroke-width="2" marker-end="url(#arr-gray)"/>
+              <text x="93" y="144" text-anchor="middle" font-size="9" fill="#999">import</text>
+
+              <!-- Step 2: Zipper File icon -->
+              <rect x="112" y="108" width="62" height="76" rx="5" fill="#f0f0f0" stroke="#bbb" stroke-width="1.5"/>
+              <polygon points="152,108 174,108 174,128 152,128" fill="#ddd" stroke="#bbb" stroke-width="1"/>
+              <polygon points="152,108 174,128 152,128" fill="#c8c8c8"/>
+              <line x1="143" y1="134" x2="143" y2="175" stroke="#888" stroke-width="2"/>
+              <rect x="133" y="134" width="8" height="5" rx="1" fill="#555"/>
+              <rect x="133" y="143" width="8" height="5" rx="1" fill="#555"/>
+              <rect x="133" y="152" width="8" height="5" rx="1" fill="#555"/>
+              <rect x="133" y="161" width="8" height="5" rx="1" fill="#555"/>
+              <rect x="133" y="170" width="8" height="5" rx="1" fill="#555"/>
+              <rect x="145" y="138" width="8" height="5" rx="1" fill="#888"/>
+              <rect x="145" y="147" width="8" height="5" rx="1" fill="#888"/>
+              <rect x="145" y="156" width="8" height="5" rx="1" fill="#888"/>
+              <rect x="145" y="165" width="8" height="5" rx="1" fill="#888"/>
+              <rect x="137" y="126" width="12" height="9" rx="2" fill="#ED1C24"/>
+              <rect x="140" y="128" width="6" height="5" rx="1" fill="#ff7777"/>
+              <text x="143" y="200" text-anchor="middle" font-size="10" fill="#666">ZIP File</text>
+
+              <!-- Arrow 2 -->
+              <line x1="176" y1="152" x2="212" y2="152" stroke="#ccc" stroke-width="2" marker-end="url(#arr-gray)"/>
+              <text x="194" y="144" text-anchor="middle" font-size="9" fill="#999">edit</text>
+
+              <!-- Step 3: Laptop -->
+              <rect x="216" y="105" width="70" height="50" rx="5" fill="#e8e8e8" stroke="#ccc" stroke-width="1.5"/>
+              <rect x="222" y="110" width="58" height="38" rx="3" fill="#d0d0d0"/>
+              <rect x="209" y="155" width="84" height="6" rx="3" fill="#ccc"/>
+              <text x="251" y="192" text-anchor="middle" font-size="10" fill="#666">Laptop</text>
+
+              <!-- Arrow 3: back to USB (export step) -->
+              <path d="M251 105 Q251 50 48 50 Q22 50 22 106" stroke="#ED1C24" stroke-width="1.5" fill="none" stroke-dasharray="5,3" marker-end="url(#arr-red)"/>
+              <text x="148" y="44" text-anchor="middle" font-size="9" fill="#ED1C24">export zip... if remembered</text>
+
+              <!-- Failure indicators -->
+              <!-- X on USB -->
+              <circle cx="70" cy="92" r="10" fill="#ED1C24"/>
+              <text x="70" y="96" text-anchor="middle" font-size="12" fill="white" font-weight="bold">✕</text>
+              <text x="70" y="80" text-anchor="middle" font-size="9" fill="#ED1C24">lost?</text>
+
+              <!-- X on ZIP -->
+              <circle cx="174" cy="92" r="10" fill="#ED1C24"/>
+              <text x="174" y="96" text-anchor="middle" font-size="12" fill="white" font-weight="bold">✕</text>
+              <text x="174" y="80" text-anchor="middle" font-size="9" fill="#ED1C24">wrong one?</text>
+
+              <!-- X on export arrow -->
+              <circle cx="148" cy="20" r="10" fill="#ED1C24"/>
+              <text x="148" y="24" text-anchor="middle" font-size="12" fill="white" font-weight="bold">✕</text>
+              <text x="148" y="8" text-anchor="middle" font-size="9" fill="#ED1C24">forgot?</text>
+
+              <!-- Markers -->
+              <defs>
+                <marker id="arr-gray" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+                  <path d="M0,0 L0,6 L8,3 z" fill="#ccc"/>
+                </marker>
+                <marker id="arr-red" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+                  <path d="M0,0 L0,6 L8,3 z" fill="#ED1C24"/>
+                </marker>
+              </defs>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 2: SOURCE CONTROL -->
+    <div class="slide" id="slide-2">
+      <div class="slide-inner">
+        <div class="slide-content">
+          <div class="slide-section-label">Section 02 — Source Control</div>
+          <h1 class="slide-title">A system that <em>remembers everything.</em></h1>
+          <div class="slide-body">
+            <p>Source control is software that tracks every change made to your files — who changed what, when, and why. It's not a backup; it's a complete, permanent history.</p>
+            <p><strong>The cloud is the backup, automatically, always.</strong> There is no export step. There is no thumb drive. There is one source of truth, and it is always current.</p>
+            <p>If a mistake is made, you can roll back to any previous state. Experiment freely — nothing is ever permanently lost.</p>
+            <p><strong>Each entry in the history (a commit) contains:</strong> a unique ID called a hash, a timestamp, the author's name, and a message explaining what changed and why. The diagram shows all four.</p>
+          </div>
+        </div>
+        <div class="slide-visual">
+          <!-- Commit timeline -->
+          <div class="diagram-wrap">
+            <svg viewBox="0 0 340 280" xmlns="http://www.w3.org/2000/svg" font-family="DM Mono, monospace">
+              <!-- Timeline line -->
+              <line x1="40" y1="30" x2="40" y2="260" stroke="#e0e0e0" stroke-width="2"/>
+
+              <!-- Commit 1 -->
+              <circle cx="40" cy="50" r="8" fill="#ED1C24"/>
+              <rect x="60" y="34" width="260" height="32" rx="4" fill="#f5f5f5" stroke="#e0e0e0" stroke-width="1"/>
+              <text x="72" y="47" font-size="10" fill="#ED1C24">a3f2c1</text>
+              <text x="72" y="59" font-size="10" fill="#1a1a1a">initial base code from chapter</text>
+              <text x="240" y="59" font-size="9" fill="#999">Maya · Sep 4</text>
+
+              <!-- Commit 2 -->
+              <circle cx="40" cy="110" r="8" fill="#ED1C24"/>
+              <rect x="60" y="94" width="260" height="32" rx="4" fill="#f5f5f5" stroke="#e0e0e0" stroke-width="1"/>
+              <text x="72" y="107" font-size="10" fill="#ED1C24">b8d4e2</text>
+              <text x="72" y="119" font-size="10" fill="#1a1a1a">mission 2: arm motor speed 80→60</text>
+              <text x="240" y="119" font-size="9" fill="#999">Jonah · Sep 9</text>
+
+              <!-- Commit 3 -->
+              <circle cx="40" cy="170" r="8" fill="#ED1C24"/>
+              <rect x="60" y="154" width="260" height="32" rx="4" fill="#f5f5f5" stroke="#e0e0e0" stroke-width="1"/>
+              <text x="72" y="167" font-size="10" fill="#ED1C24">c9f5a3</text>
+              <text x="72" y="179" font-size="10" fill="#1a1a1a">mission 4: gyro turn left 3 degrees</text>
+              <text x="240" y="179" font-size="9" fill="#999">Maya · Sep 12</text>
+
+              <!-- Commit 4 (current) -->
+              <circle cx="40" cy="230" r="8" fill="#ED1C24" stroke="#ED1C24" stroke-width="3"/>
+              <rect x="60" y="214" width="260" height="32" rx="4" fill="#fff5f5" stroke="#ED1C24" stroke-width="1.5"/>
+              <text x="72" y="227" font-size="10" fill="#ED1C24">d2a1b7</text>
+              <text x="72" y="239" font-size="10" fill="#1a1a1a">mission 1: fix base return path</text>
+              <text x="240" y="239" font-size="9" fill="#999">Sam · Sep 16</text>
+
+              <!-- "current" label -->
+              <text x="8" y="234" font-size="9" fill="#ED1C24" text-anchor="middle" transform="rotate(-90,8,234)">current</text>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 3: GIT vs GITHUB -->
+    <div class="slide" id="slide-3">
+      <div class="slide-inner">
+        <div class="slide-content">
+          <div class="slide-section-label">Section 03 — Git &amp; GitHub</div>
+          <h1 class="slide-title">Git is the <em>tool.</em> GitHub is the <em>place.</em></h1>
+          <div class="slide-body">
+            <p><strong>Git</strong> is software that runs on your laptop. It tracks every change you make to your code files. It works entirely offline — no wifi required. You get the full benefits of version tracking during every practice, even in the school library.</p>
+            <p><strong>GitHub</strong> is a website that stores a shared copy of your team's code in the cloud. When a coach pushes your commits to GitHub after practice, your work is safe, backed up, and accessible to the whole team.</p>
+            <div class="callout">Git is the engine. GitHub is the garage where the team's car is parked.</div>
+          </div>
+        </div>
+        <div class="slide-visual">
+          <!-- Two-panel diagram -->
+          <div class="diagram-wrap">
+            <svg viewBox="0 0 340 240" xmlns="http://www.w3.org/2000/svg" font-family="DM Mono, monospace">
+              <!-- Left panel: Laptop + git -->
+              <rect x="10" y="20" width="145" height="200" rx="8" fill="#f5f5f5" stroke="#e0e0e0" stroke-width="1.5"/>
+              <!-- Laptop icon -->
+              <rect x="35" y="45" width="95" height="65" rx="5" fill="#e0e0e0" stroke="#ccc" stroke-width="1"/>
+              <rect x="40" y="50" width="85" height="54" rx="3" fill="#1a1a1a"/>
+              <!-- Git logo image -->
+              <image href="data:image/jpeg;base64,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" x="28" y="50" width="90" height="46" preserveAspectRatio="xMidYMid meet"/>
+              <rect x="28" y="110" width="109" height="8" rx="4" fill="#ccc"/>
+              <!-- Labels -->
+              <text x="82" y="145" text-anchor="middle" font-size="13" font-weight="600" fill="#1a1a1a" font-family="DM Sans, sans-serif">Git</text>
+              <text x="82" y="160" text-anchor="middle" font-size="10" fill="#666">runs on your laptop</text>
+              <text x="82" y="174" text-anchor="middle" font-size="10" fill="#666">works offline</text>
+              <text x="82" y="188" text-anchor="middle" font-size="10" fill="#666">tracks all changes</text>
+
+              <!-- Right panel: Cloud + GitHub -->
+              <rect x="185" y="20" width="145" height="200" rx="8" fill="#f5f5f5" stroke="#e0e0e0" stroke-width="1.5"/>
+              <!-- GitHub logo -->
+              <image href="data:image/png;base64,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" x="222" y="38" width="72" height="72" preserveAspectRatio="xMidYMid meet"/>
+              <text x="258" y="124" text-anchor="middle" font-size="9" fill="#666" font-weight="500">github.com</text>
+              <!-- Labels -->
+              <text x="258" y="163" text-anchor="middle" font-size="13" font-weight="600" fill="#1a1a1a" font-family="DM Sans, sans-serif">GitHub</text>
+              <text x="258" y="178" text-anchor="middle" font-size="10" fill="#666">lives in the cloud</text>
+              <text x="258" y="192" text-anchor="middle" font-size="10" fill="#666">shared team copy</text>
+              <text x="258" y="206" text-anchor="middle" font-size="10" fill="#666">needs wifi to access</text>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- SLIDE 4: VOCABULARY -->
+    <div class="slide" id="slide-4">
+      <div class="slide-inner">
+        <div class="slide-content">
+          <div class="slide-section-label">Section 04 — Git Vocabulary</div>
+          <h1 class="slide-title">Learn the words. <em>Understand the workflow.</em></h1>
+          <div class="slide-body">
+            <p>Before diving in, here are the key terms you'll hear throughout this guide — each explained the way it actually feels to use it.</p>
+          </div>
+        </div>
+        <div class="slide-visual" style="background:var(--white); border-left:1px solid var(--gray-mid); padding:28px 32px; overflow-y:auto;">
+          <div style="width:100%;max-width:420px;">
+            <div style="display:flex;gap:14px;margin-bottom:16px;align-items:flex-start;">
+              <div style="min-width:110px;font-family:var(--font-mono);font-size:11px;font-weight:600;color:var(--red);padding-top:2px;">Repository</div>
+              <div style="font-size:13px;line-height:1.6;color:var(--gray-dark);">Your team's project folder — but one that remembers every version of every file, forever.</div>
+            </div>
+            <div style="display:flex;gap:14px;margin-bottom:16px;align-items:flex-start;">
+              <div style="min-width:110px;font-family:var(--font-mono);font-size:11px;font-weight:600;color:var(--red);padding-top:2px;">Commit</div>
+              <div style="font-size:13px;line-height:1.6;color:var(--gray-dark);">Like saving a file — but smarter. Records exactly what changed, who changed it, and why. You can always go back to any commit.</div>
+            </div>
+            <div style="display:flex;gap:14px;margin-bottom:16px;align-items:flex-start;">
+              <div style="min-width:110px;font-family:var(--font-mono);font-size:11px;font-weight:600;color:var(--red);padding-top:2px;">Push</div>
+              <div style="font-size:13px;line-height:1.6;color:var(--gray-dark);">Uploading your commits from your laptop up to GitHub. Your work joins the shared team copy in the cloud.</div>
+            </div>
+            <div style="display:flex;gap:14px;margin-bottom:16px;align-items:flex-start;">
+              <div style="min-width:110px;font-family:var(--font-mono);font-size:11px;font-weight:600;color:var(--red);padding-top:2px;">Pull</div>
+              <div style="font-size:13px;line-height:1.6;color:var(--gray-dark);">Downloading the latest commits from GitHub onto your laptop. Now you have everything your teammates pushed.</div>
+            </div>
+            <div style="display:flex;gap:14px;margin-bottom:16px;align-items:flex-start;">
+              <div style="min-width:110px;font-family:var(--font-mono);font-size:11px;font-weight:600;color:var(--red);padding-top:2px;">Branch</div>
+              <div style="font-size:13px;line-height:1.6;color:var(--gray-dark);">A separate line of work. The team uses one branch called <strong>main</strong> — that's all you need for now.</div>
+            </div>
+            <div style="display:flex;gap:14px;margin-bottom:16px;align-items:flex-start;">
+              <div style="min-width:110px;font-family:var(--font-mono);font-size:11px;font-weight:600;color:var(--red);padding-top:2px;">Merge Conflict</div>
+              <div style="font-size:13px;line-height:1.6;color:var(--gray-dark);">When two people edit the same part of the same file, git can't decide which version wins. The coach resolves it. Staying on your assigned mission file keeps this rare.</div>
+            </div>
+            <div style="display:flex;gap:14px;align-items:flex-start;">
+              <div style="min-width:110px;font-family:var(--font-mono);font-size:11px;font-weight:600;color:var(--red);padding-top:2px;">Tag</div>
+              <div style="font-size:13px;line-height:1.6;color:var(--gray-dark);">A permanent bookmark on a specific commit — used to mark the exact code that ran at a competition.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 4: STUDENT WORKFLOW -->
+    <div class="slide" id="slide-5">
+      <div class="slide-inner">
+        <div class="slide-content">
+          <div class="slide-section-label">Section 04 — Student Workflow</div>
+          <h1 class="slide-title">At practice, students do <em>two things.</em></h1>
+          <div class="slide-body">
+            <p>Your team laptop arrives already configured. The repository is cloned, GitHub Desktop is set up, and your mission files are waiting. There is nothing to install or set up.</p>
+            <p><strong>Your files live in one place on the laptop.</strong> When you open VS Code, you're editing those exact files directly — no copies, no confusion about which version is which. GitHub Desktop watches the same folder and notices your changes automatically.</p>
+          </div>
+          <div class="step-list">
+            <div class="step-item">
+              <div class="step-num">01</div>
+              <div class="step-text"><strong>Edit</strong>Open your assigned mission file and make your changes. Work freely — nothing you do here affects your teammates' laptops yet.</div>
+            </div>
+            <div class="step-item">
+              <div class="step-num">02</div>
+              <div class="step-text"><strong>Commit</strong>When you reach a good stopping point, commit your work. Write a message that explains what you changed and why. This creates a permanent snapshot.</div>
+            </div>
+            <div class="step-item">
+              <div class="step-num">—</div>
+              <div class="step-text"><strong>That's it for practice.</strong>Push to GitHub happens after practice, at home. That's the coach's job.</div>
+            </div>
+          </div>
+        </div>
+        <div class="slide-visual">
+          <!-- ANCHOR DIAGRAM v1: student focus (commit highlighted) -->
+          <div class="diagram-wrap">
+            <svg viewBox="0 0 400 340" xmlns="http://www.w3.org/2000/svg" font-family="DM Mono, monospace">
+              <defs>
+                <marker id="arr-up" markerWidth="8" markerHeight="8" refX="4" refY="6" orient="auto">
+                  <path d="M0,8 L4,0 L8,8 z" fill="#ccc"/>
+                </marker>
+                <marker id="arr-down" markerWidth="8" markerHeight="8" refX="4" refY="2" orient="auto">
+                  <path d="M0,0 L4,8 L8,0 z" fill="#ccc"/>
+                </marker>
+                <marker id="commit-arr4" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto">
+                  <path d="M0,0 L0,6 L7,3 z" fill="#ED1C24"/>
+                </marker>
+              </defs>
+
+              <!-- GitHub logo — large, centered top -->
+              <image href="data:image/png;base64,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" x="150" y="5" width="100" height="100" preserveAspectRatio="xMidYMid meet"/>
+              <text x="200" y="114" text-anchor="middle" font-size="9" fill="#666">GitHub</text>
+
+              <!-- Push/Pull arrows (muted — not student job) -->
+              <line x1="110" y1="178" x2="168" y2="118" stroke="#ddd" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#arr-up)"/>
+              <text x="127" y="158" font-size="8" fill="#ccc" text-anchor="middle">Push</text>
+              <line x1="190" y1="118" x2="140" y2="178" stroke="#ddd" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#arr-down)"/>
+              <text x="180" y="158" font-size="8" fill="#ccc" text-anchor="middle">Pull</text>
+
+              <!-- LAPTOP 1: Primary (full opacity) -->
+              <rect x="30" y="182" width="110" height="76" rx="6" fill="#f0f0f0" stroke="#aaa" stroke-width="2"/>
+              <rect x="38" y="190" width="94" height="54" rx="4" fill="#1a1a1a"/>
+              <rect x="42" y="195" width="38" height="3" rx="1" fill="#ED1C24"/>
+              <rect x="42" y="202" width="74" height="2" rx="1" fill="#4a4a4a"/>
+              <rect x="42" y="208" width="58" height="2" rx="1" fill="#4a4a4a"/>
+              <rect x="22" y="258" width="126" height="7" rx="3.5" fill="#aaa"/>
+              <!-- Minifigure 1 -->
+              <circle cx="68" cy="282" r="6" fill="#ED1C24"/>
+              <rect x="62" y="288" width="12" height="14" rx="2" fill="#ED1C24"/>
+              <line x1="62" y1="292" x2="54" y2="300" stroke="#ED1C24" stroke-width="2.5"/>
+              <line x1="74" y1="292" x2="82" y2="300" stroke="#ED1C24" stroke-width="2.5"/>
+              <line x1="64" y1="302" x2="61" y2="313" stroke="#ED1C24" stroke-width="2.5"/>
+              <line x1="70" y1="302" x2="73" y2="313" stroke="#ED1C24" stroke-width="2.5"/>
+              <!-- Minifigure 2 -->
+              <circle cx="100" cy="282" r="6" fill="#4a4a4a"/>
+              <rect x="94" y="288" width="12" height="14" rx="2" fill="#4a4a4a"/>
+              <line x1="94" y1="292" x2="86" y2="300" stroke="#4a4a4a" stroke-width="2.5"/>
+              <line x1="106" y1="292" x2="114" y2="300" stroke="#4a4a4a" stroke-width="2.5"/>
+              <line x1="96" y1="302" x2="93" y2="313" stroke="#4a4a4a" stroke-width="2.5"/>
+              <line x1="102" y1="302" x2="105" y2="313" stroke="#4a4a4a" stroke-width="2.5"/>
+              <!-- Commit circular arrow (EMPHASIZED) -->
+              <path d="M46 230 A22 22 0 1 1 68 252" fill="none" stroke="#ED1C24" stroke-width="2.5" marker-end="url(#commit-arr4)"/>
+              <text x="28" y="232" font-size="9" fill="#ED1C24" font-weight="500">Commit</text>
+              <text x="85" y="330" text-anchor="middle" font-size="8" fill="#666">org laptop</text>
+
+              <!-- LAPTOP 2: Optional (65% opacity, dashed border) -->
+              <g opacity="0.7">
+                <rect x="155" y="182" width="100" height="76" rx="6" fill="#eaeaea" stroke="#bbb" stroke-width="1.5" stroke-dasharray="5,3"/>
+                <rect x="162" y="190" width="86" height="54" rx="4" fill="#555"/>
+                <rect x="167" y="195" width="34" height="3" rx="1" fill="#ED1C24" opacity="0.7"/>
+                <rect x="167" y="202" width="68" height="2" rx="1" fill="#777"/>
+                <rect x="167" y="208" width="52" height="2" rx="1" fill="#777"/>
+                <rect x="147" y="258" width="116" height="7" rx="3.5" fill="#bbb"/>
+                <!-- Minifigure 1 -->
+                <circle cx="188" cy="282" r="6" fill="#888"/>
+                <rect x="182" y="288" width="12" height="14" rx="2" fill="#888"/>
+                <line x1="182" y1="292" x2="174" y2="300" stroke="#888" stroke-width="2"/>
+                <line x1="194" y1="292" x2="202" y2="300" stroke="#888" stroke-width="2"/>
+                <line x1="184" y1="302" x2="181" y2="313" stroke="#888" stroke-width="2"/>
+                <line x1="190" y1="302" x2="193" y2="313" stroke="#888" stroke-width="2"/>
+                <!-- Minifigure 2 -->
+                <circle cx="218" cy="282" r="6" fill="#888"/>
+                <rect x="212" y="288" width="12" height="14" rx="2" fill="#888"/>
+                <line x1="212" y1="292" x2="204" y2="300" stroke="#888" stroke-width="2"/>
+                <line x1="224" y1="292" x2="232" y2="300" stroke="#888" stroke-width="2"/>
+                <line x1="214" y1="302" x2="211" y2="313" stroke="#888" stroke-width="2"/>
+                <line x1="220" y1="302" x2="223" y2="313" stroke="#888" stroke-width="2"/>
+                <text x="205" y="330" text-anchor="middle" font-size="8" fill="#888">optional</text>
+              </g>
+
+              <!-- LAPTOP 3: Optional (55% opacity, dashed border) -->
+              <g opacity="0.55">
+                <rect x="270" y="182" width="100" height="76" rx="6" fill="#eaeaea" stroke="#bbb" stroke-width="1.5" stroke-dasharray="5,3"/>
+                <rect x="277" y="190" width="86" height="54" rx="4" fill="#666"/>
+                <rect x="282" y="195" width="30" height="3" rx="1" fill="#ED1C24" opacity="0.6"/>
+                <rect x="282" y="202" width="62" height="2" rx="1" fill="#888"/>
+                <rect x="282" y="208" width="48" height="2" rx="1" fill="#888"/>
+                <rect x="262" y="258" width="116" height="7" rx="3.5" fill="#bbb"/>
+                <!-- Minifigure 1 -->
+                <circle cx="303" cy="282" r="6" fill="#999"/>
+                <rect x="297" y="288" width="12" height="14" rx="2" fill="#999"/>
+                <line x1="297" y1="292" x2="289" y2="300" stroke="#999" stroke-width="2"/>
+                <line x1="309" y1="292" x2="317" y2="300" stroke="#999" stroke-width="2"/>
+                <line x1="299" y1="302" x2="296" y2="313" stroke="#999" stroke-width="2"/>
+                <line x1="305" y1="302" x2="308" y2="313" stroke="#999" stroke-width="2"/>
+                <!-- Minifigure 2 -->
+                <circle cx="333" cy="282" r="6" fill="#999"/>
+                <rect x="327" y="288" width="12" height="14" rx="2" fill="#999"/>
+                <line x1="327" y1="292" x2="319" y2="300" stroke="#999" stroke-width="2"/>
+                <line x1="339" y1="292" x2="347" y2="300" stroke="#999" stroke-width="2"/>
+                <line x1="329" y1="302" x2="326" y2="313" stroke="#999" stroke-width="2"/>
+                <line x1="335" y1="302" x2="338" y2="313" stroke="#999" stroke-width="2"/>
+                <text x="320" y="330" text-anchor="middle" font-size="8" fill="#999">optional</text>
+              </g>
+
+              <text x="200" y="338" text-anchor="middle" font-size="9" fill="#aaa">1–3 laptops per team</text>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 5: COACH WORKFLOW -->
+    <div class="slide" id="slide-6">
+      <div class="slide-inner">
+        <div class="slide-content">
+          <div class="slide-section-label">Section 05 — Coach Workflow</div>
+          <h1 class="slide-title">Coaches handle <em>Push and Pull,</em> at home.</h1>
+          <div class="slide-body">
+            <p>The school library doesn't have wifi for team laptops. That's fine — Git works completely offline. Students commit throughout practice. After practice, at home, the coach connects and pushes everyone's commits to GitHub.</p>
+          </div>
+          <div class="step-list">
+            <div class="step-item">
+              <div class="step-num">01</div>
+              <div class="step-text"><strong>Push — after practice, at home</strong>Open GitHub Desktop on each laptop, connect to wifi, and push. All the commits made during practice go to GitHub.</div>
+            </div>
+            <div class="step-item">
+              <div class="step-num">02</div>
+              <div class="step-text"><strong>Pull — before next practice</strong>Before the next session, pull on every laptop so each one has the full history of what every teammate did.</div>
+            </div>
+            <div class="step-item">
+              <div class="step-num">03</div>
+              <div class="step-text"><strong>Merge if needed</strong>If two students edited overlapping code, GitHub Desktop will flag it. The coach resolves it. With good file-per-mission discipline, this is rare.</div>
+            </div>
+          </div>
+        </div>
+        <div class="slide-visual">
+          <!-- ANCHOR DIAGRAM v2: push/pull arrows emphasized -->
+          <div class="diagram-wrap">
+            <svg viewBox="0 0 400 340" xmlns="http://www.w3.org/2000/svg" font-family="DM Mono, monospace">
+              <defs>
+                <marker id="arr-up-bold" markerWidth="8" markerHeight="8" refX="4" refY="6" orient="auto">
+                  <path d="M0,8 L4,0 L8,8 z" fill="#ED1C24"/>
+                </marker>
+                <marker id="arr-down-bold" markerWidth="8" markerHeight="8" refX="4" refY="2" orient="auto">
+                  <path d="M0,0 L4,8 L8,0 z" fill="#1a1a1a"/>
+                </marker>
+              </defs>
+
+              <!-- GitHub logo large -->
+              <image href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMgAAABwCAYAAABbwT+GAAAU7ElEQVR42u2de7Bd9VXHP/ucc2+4SW4CTWgpCVBeAsWQitpix1Jp1UqKEQEpD1FblKmPOop16lRhpBVHZar4aAWKUloU0KFMS4vtUFJG6QMok0ChPA1IDC0QIEACyc05+/jHby33ur/72+fsfc659+yT81sze3Jz7378Huv7W4/fWuuXEGmhKAFq8m8baJV8vm6eTeXfSAswaZHmj2pypXL5NA3sK9diYFJ+PwO8CmyX65Ue3h0pAqTSkqLtMe4KYC1wAvAW4EjgjQKORTnv2i0A+T7wGLAJ+DZwH/C8B5YkSpZIVQdG3fvdocCHgK8C24R5865U1K6WYfS8a5u880PyjZAqFilSZcgCowGsB74A7PQYuwXskatl1KNOoEkDz9l7dsq31su3Q22KFGmoNgZiP3wAuN9j4D1As4BUKHOl8s493u/vlzZMBtoXKdLQpMZpYhdYSTFoUHQDi5Us90mbojSJNFRb40jgi4YxmwEVaCEvBab+/4vSxmibRFowlUrpN3AepioAoxNQtktbQ32IFGngKtUS4FpParQretm2XSttjypXpIGTeocOAe42xndaYXBYG0WN+XukD3ger0iR+gbHWmCLAUd7xC5t8xbpSwRJpIGpVT9KttE3iuDwQfKc9CmqW5H6BscaA47mCIPDt0u2AT8cQRKpH2/VgcCTXcChO91Vske6tUn78qT0MXq3IhUm3edYBNxVUq1Sg3gYLt9WyW9rn+6SvsZ9kkiljPKrCoJjRlbiFwIM22LhNwfbwEvAZmAHs/NH8kByVTTaI5WxO95XABz6tz+VFfgNwE8CHwceKACU1DD3npyrSX5QY+oB4wngE8C7RW2aBM40bejWj7OiPRKpm91Rw+VobCsgAZTB1wTeNQGcAdzJ3KDFfrxgFkz6uwdwO+VLA+1YCjzbRYpoP7dJ32OAo6dvR8pWzhZwvaymzQ4qRypMtBk4Rhg2MVfT3HsucAlwuPeO54GtuGSo50Qt2i1MOwksA1YCBwCrREIl3vOXAp+S51RFapv2tYBbgFPk5zzpoH29ATjbjEWkSLPUihMp5s7Vv9+S4wFKPKN3mag/n8OFox8P7FeifdPAsQLcK4BryHbEyTGwFdyXFrSltE8nRlUrUp569a2CAFFm+8cCxm29wLfr8g7/6uZZ6vR3bdMHSwLk21HNmj050WvlVJJTcPnirRKr544C97SMRFEg1AxjW2Pdv9QG0jx3C5ya+Xsn2llSxXybjEUavVoRIMqgAH9A+YIHiwveZ41hm0hFiedTDzhFK5lMlexTG/iwNzYRIGNse6TAW4F3CHMUkR66+q82TFVVWl1yPNo4d/VbZWzqESCRzicrm0MJgLwZtwfSonoeQe3L8V6bizyXyJhEGmNShpkGfkDnvYK8/YO2YcB6Bfu2L/CysXOKhsu0ZUymS4Ir0l6mXgGcSvfd5jyPz7+Jjl+rIBOpU+ASykci61icWkHwR1ogUg/NlczOuivCPCkutGNZhVfYxLTrayVBotmSV3pjFWnMVKw6WdxUUQmiTHbaCDCPrvxH43bbuxWq8yXIA8Qo37F2ThyBi8Ytan8oOO5ldDbTFCSfoXjovo7FjIzR2Dp0amMOkLW4wMKiXih1515BFu80KtLyihJznsiYTJDlr0eAjCGt8Ri/GzgawGvAV+R3o7CRpkGH3wEeJTsyoehisCaqGuNLR5W4V5nqIVxlkITR2Wmui3r4zR6AfVQEyPiRrqoHGZWi6Ir60AiP3YMl1TI7Rq0IkPEgPcashsu3KAoQpa09PFMVKtN2vWcl2YFASQTI+NAU2T5GGdoxgn1t99H2acoHPEaA7AU0QXaORpmVcZQ3zcrsiOuYLJKxigAZM2rQWwjFkhFVKyGct14EVI0IkPE01HvxQq0Y4T6v8FSuIpQyxvnp4wyQPbid4rKr8CrDOKNGB/XwzIyMVQTImNEuY7S2SwDkULI03VHx6mj/fqiEzWUN+10RIOND6q5s4qohlpUghwAH92DcD9P+aIlDYk0PAHlBxiphDM9gH/dYrK0lJYjGJ51AVkhhVAz0YwTc7ZLt3jrOvDKuAFGmeayk0ar3nUoW+Toqc/xeA/IyfX1shKRlBMiA6YGS96tb+GRcmc5RiOjV8j3nlZzzpMcxirQXLQzHUTyJyC8a9zF5R5X3CLRtp1E+rVjH5bi4mI6virWI7ICcMkUNWrhiCIdUmHnsOScPU65wg973hDw/tirWOJOqS9dTLifdZhbebt5VNQbS8JC/p3zRBs1J/1dvrCKNEan68X56O39Q7/87I0WqIElqpm+/1Wfffm0E1MhI82yHHAC8Que89DTHVlGp80kjQRpDkiaJx8gXGmYvY2PpvS/jjlyI6lVUs/h8CTWr6enyutp+DVc9xL57vlUvWxRb6Q1kBRp6OVxU1aubonoVSSd/XRdDPcUdcrMrAAz78w7gL5h9dodd3Rt9Mpw9JsFX51aI1Hia/o6s1jE4OQIkkjLvBPA9z9OjK+9TuNCSFcBhwAXA4x1Aoodofg74BWD/eWz7vrgzCT+JO6mqPQBwpLi9j2GpipEqaqx/MMBcLeBV4Je8Z5YDNwfuTwPM+QLwn8DluILQJ5PlZZRhwEngp3Ebfn8J3EZWU7jdo72RZ5xfEI3zSFaCJLi00s05UqQNfFoYe8IY+f+Rs2KnAVtFr6/jkq7K1PNV1eqfyT8fvR9gWOmxWcYiiRIkkm+L/HIOw+v/N8hKPiHM8zpcMF+ri/2iuSfbjGeoVhLEyHcflnfNDAAUoT6eE22PSHkgSXC1o0Ig0RNoL5f7dYf5F433p9XFM/S3fagu+sxvU7yEaFlwfMN4xiJFCkqRHyE70zxv3+Odxi4A+Kh3jz7fNNKjDfxUHwyoKtmbjDdtEBIkNe18S5QekYqA5KKcVdoWr55g9q71+QGj2V5PkeWE96Pb13DF68oGH3YLvrwogiNSEV1fVa0NXUByMtn+htoTK8Ubdh0uTutWXCzU+xhMsQf9zu305871wbGBuWe7R4rUUZVZRbbp5u+cpzg3K8ZgX4iVV79xywAAon16Wvo6KhmSkSqkap2Aq+aeEg4vsfsFdaNy6c+ddr77adeX6H9DsCV9+4moWkXqhWyyUcpsV67+v2lA4qtpgwSGD5Av9wEQ24/T+/CqRYr0/4xzrgcMG+Hbxp0X8vO4fZE8mh6Aft8vQGzw4nkRHMUZIFKYmjJG/yLM9VmyE6nqBijvkes5XJzWVlyIygQuLOVg4H9xQZHDKp+jbW4Cv4pLhmrI/yNFGshC8m7cbrjv3coLK7HXPUYFW2gJom19AfjZuDhGmk+QHI07ziwEDLvpptduuedbAwTIrQUB0jL3bAKOjeCINJ+kDDqFCzH3Q0k6hXEMQoKowf/VLgDxk78+TVaVPoIj0ryS9UqtBx7pApT5AMht5EcRW2D8N3BGTtsjRZo3shuD08Cf4XK4LVBazN6Qu3eA4PQB4gNjJ3AZsJ+RfHGHPNLQVC6Aw4FP4bIJrQ2wW5j3wQEC5A555y5PiuwErsbV4Q21MVKkoUoTcNG2l5Cl5er1+QEwrD57pffu/8FlGR7p3RulxgAmN9LgbBNbHHoK5xY+xag8P6C/fRCdr/2AP8IFQH5FrlcMMFTtihSpkkAZhqdo0GEtkfYSCZJ4l0++C3Qh22XzzlsD/L5V62ziVKQIkDn6eJkDJrU8aGvIDJVnhxRRjTqFpS8EUIb9/QiQAkyOYaR9cGfvHY6rQbWP/L6Ji4d6DtgihuxLJQ3uNOryUYKMmtRQiXEiLujuJNzBmt3oGVy4xS3AjcDzZtWmg/FcGzBIGrgcjEXme3os2mMC5FBb9HcrgbU50ucucQjMR0CkvnN/+X478P27cdUlx/I8w6qoVEfgXKahkI49gSsUjnG7J40S8/+zgb/C5Wiv8e4bhOQ7jPzYqasNiELAAvi9Ds+/p4sK1y+wISuKHbrWzeP3h0KNEQJHC3gXcIOsYqr+qF3RbVLauOoidbKDKa1xvxRXsPlnzDN/Avw6royoL0k6pdl2snESAa66Y/XE3UZBSZWQBUU2jCpYphBdv+R/v8VeuiFZG5E2toC34VJN95fJUXdqLcfQ9Y8rsJl+GzyDMwUuFnDMGGk0iQv0O5S55xGq1Apd7QJMXgtcZZ0NvT4/iDkZ5vejBPFUn+UiOaYELI0AKPT3ee7eljHe7wk8t57swEud7D1iK6zDRe/WDOAOJTvtNjHvS4B/xyVIRV08AmRBpMfFuBCOZqDNLSMZEOP7JbIzzadxO8+qAjxNdrRxar6zKMDQqs4s9dS9Jq6gw1/ntPtxAUiNcm7oSBEgpcGxGldrKg3ouS1jU1yBC7nYjAu7UGmwBFcP9xhc2Mf3RY2qmXfOAPfhzvWYEWC1jXfpTk9CYFQxq3+3zPsiRYDMO0BS4CxgcUB6KHPfijtn8NkctWo3LtX0IbKAQSs9lOkvxrmO9/WkxTW4mrU1T71LjEpX9wz3GOM22wli3dkRIAMiVU1O91ZuZe5EVv3TBAQTHbxHiWcnpDnvOgn4Y+B4XH7HDaJG1QKqVyejVFU+C5aF3nDMA2q7g9qX90xacmFreA4S+35GSe2sKkBUehyEK6gcYsgE+F0BR0MM6jzqtnLp3zcx97Acn4HUBnmtw33bjUdr0JSWXGB6WZTy5qSIxEhlTgCWif3WBF40c1Rj4WPj9iqA6Cp2HC50xLpYVc+/G3dyU61PRlQwniBXaqTKhDD7dWJXaNG1JczOvfDbfa4AW1fMnbgyO691Ub/soZztADjbJdS3dcDrTV/UntqC2yj1HRITuCPjljJ3h38j8N0C35wBfgz4FRnLQ2SsmriQn3txpZNuNf2NXr4+gPuHzC2xoz9/LAfkjRKXFfs3k79DfLDc837gC7hwkLIVDY+Qdxxp+pB6ffqHAmNzQWBM/IM3FwtDhtrxSA6oD+zQ9s+Y+y8kXNQ7Jas63+36LM5ruJCbm3udDQIuLCNvld6Y80yv0uRVoxY1zGq9y6xyHwGOKqiq2A3KPV1WSgXpe4E3Bmweq74c4T2TRy+JwyE1UrJGllgVopcFXP4O/66CUv9oMwc+81uAnCeawZk5fY0AKWgThA6yV8bYHNDJJ3FHDSwxqkXo3TUBxI2eXtww49JmbjiJ2hZtOp8CW/c8ZK0CzAVur+dNJdXQbo4CHyBFnAtWlStz2q0Nd7d7TD5YZsTWO0scIZWt8Fh1gCwP/D4RI3B7wI44UMR3UbrTAK3oeNU7gK+TnZMU7Herw71tqh3W0SlPpBawpz6CizqorFer6gCZ6mAM7vZAo/Qa2UZfngQpovbkqW9lzgKxLt5mwfurOCdFwZ3gwnjuwJ2otT8uOvpIbz4UIGvFEbORwacVjIUNkhQAURE1ITSRvUzG2bh8jBlcYONl3uqoP/8ObnNRGWGXeI/o8t0iCVrDkCBJQXCcA1zv/e1yAcyagDeyAbw9AqR3yhO9k2SnzCaBVb5mJm0QDKVgfEIujGerHbjvQdyeShH1Y9jMP0gA3WPmR0N9XgQ+LqpUCADHRi9WbwPexmWnhSZiMmCf6N8Xz/N46b7LVIf7FpPlqBTRr3Vl/QZuv6QeYCYNdTkJV040rSCYlphFyu4nfVOcItZDpnO5qotGEAHSYUXaFhg83Sg8GLd5ZdWlZ3CZgNNmotbhNu0GwVBpQVXIMkdaQIJo2zbiqjN2k6pVBUgakLxtmcdncCkCvuq7LAKkd4A81UHdWYvbkbW7sa/i6uRamh4gQOabpsg2MZuBuWoyO/R+VGgP+aE5lZ6TqjPM9wJ2hv78LsJlcpTB9pF/p0aIkdTb1eka1SorSUGpEwFSQlRvJN+HfiLwZvm57hnpewND7U3UME4Vn17tAqAIkBw1KsHFDT3KXLdsitvruMzouWpA20IMw4r1qXo+SLLAbV5qnCqJpyq/GCVIbwDRsPKbA6JYvTzrgE8Y1cTmIOhhNsPI7msawBapuLLQq7mOrz3LPR3g+/0z41fjTgAO7U1tiRKkPzXrGmF2P6hNN5YuxLlHz8EFN+4rhvnrcdUWD5qnCWh3cSA0DUgXutRpqASo9v9gGaOWZ/NM0HvgYNtbHLTfepDQmeTHpD1cdd2wygCp4wosXA38pgz4RAAkb5drBhfFmuL2SqaZG9Y+KGA8HwCe2kcXSVvvEIZZjHNJ71qgsfNj1TBq6nLgWuDPpQ8rgXcCHyAr25r0OC434mqI3YlLgV4E/BxZ2kI9oAV8p8rGetV30tVA/yiuauBhzM1Nt5VDJnHxPyF7ZtCS4zGc63KKuZtfy3AhFpaOE5DMp9S2iU6PMte9rRJivVwzMmaDsmmOEeBB52JyLWnLgyJBkqoCpOpuXp3w7bjc9O1k6bV+rnOdcHJOXo2sXoGjDLcVVws3lOPt/27QIC1CXyK/xq/2f5KsAF5K53z1bvNkVTYrLULqpW6iXkXFqzKOQtyPqlqbcHsfj4iapQk9dgISwueFtAOTN8nsPPZWhytvxbzEeMuaXjssYFNvdc/7TlpwPPKeb5sF4yZcht+ESAp/QbHgqRmmrXdpV+j7tppL4i1QdW8etKzSd4F/ouK1w0YlME5XmY24XOe/EVsjVDmkZQxPKylsqdL/wqWnbjU2zVJ51yJmVyVZGhgnVRHuAH7fvDvxAOCXPFW11v+G/n9JgbGY8p6pSx/qRl2qi/p3Fq5Q3iSzD/Jp5YzNM8K09Q7tCn3/NlweTmI8WIkHJv3WJK6w3ulku+sxo3BAIKmJmnWh6Phn4NJU14jtkQf4HSJ5NsjKeldAGtwitkPLrP51YZoXAhOpku1yXDGCDwPvYHYVR2TFfNgY9c8DX2Z21qNWgbyzgIfsfuDrnm2hq/UTxpNUk3t/XGy4U3GBgb46swtX8ugmMd6fxWVyvk7+1hAvodIm833df7pSnr8OOF+M/gMC39qKi+q9FBefVckQ95CqMEqUBMTycpyv/UBxYU7JwL+COzjzKVxFxU7v6EcK6ySvxKXM7i+M8zLwJK7Iw7A0BG3bEtxBQ6tlIUgFDI977euVae1z07jc+VXy3dcEHI+QRWhXHhyjChA7ITrIRQe60cEQrXUYo25AKnKybBLwduXZGN3mrFNKbjtnnJpd3lk3qlCtQ7vyvp9SrDBcg+EfgVeY/g/NTRE6tCELFQAAAABJRU5ErkJggg==" x="150" y="5" width="100" height="100" preserveAspectRatio="xMidYMid meet"/>
+              <text x="200" y="114" text-anchor="middle" font-size="9" fill="#666">GitHub — at home</text>
+
+              <!-- Push/Pull to Laptop 1 -->
+              <line x1="88" y1="178" x2="162" y2="118" stroke="#ED1C24" stroke-width="2.5" marker-end="url(#arr-up-bold)"/>
+              <line x1="175" y1="118" x2="108" y2="178" stroke="#1a1a1a" stroke-width="2.5" marker-end="url(#arr-down-bold)"/>
+              <text x="100" y="152" font-size="9" fill="#ED1C24" font-weight="500" text-anchor="middle">Push</text>
+              <text x="148" y="152" font-size="9" fill="#1a1a1a" font-weight="500" text-anchor="middle">Pull</text>
+
+              <!-- Push/Pull to Laptop 2 -->
+              <line x1="210" y1="178" x2="196" y2="118" stroke="#ED1C24" stroke-width="2" marker-end="url(#arr-up-bold)"/>
+              <line x1="208" y1="118" x2="222" y2="178" stroke="#1a1a1a" stroke-width="2" marker-end="url(#arr-down-bold)"/>
+
+              <!-- Push/Pull to Laptop 3 -->
+              <line x1="318" y1="178" x2="242" y2="118" stroke="#ED1C24" stroke-width="2" marker-end="url(#arr-up-bold)"/>
+              <line x1="248" y1="118" x2="328" y2="178" stroke="#1a1a1a" stroke-width="2" marker-end="url(#arr-down-bold)"/>
+
+              <!-- LAPTOP 1: Primary (full opacity) -->
+              <rect x="30" y="182" width="110" height="76" rx="6" fill="#f0f0f0" stroke="#aaa" stroke-width="2"/>
+              <rect x="38" y="190" width="94" height="54" rx="4" fill="#1a1a1a"/>
+              <rect x="42" y="195" width="38" height="3" rx="1" fill="#ED1C24"/>
+              <rect x="42" y="202" width="74" height="2" rx="1" fill="#4a4a4a"/>
+              <rect x="42" y="208" width="58" height="2" rx="1" fill="#4a4a4a"/>
+              <rect x="22" y="258" width="126" height="7" rx="3.5" fill="#aaa"/>
+              <circle cx="68" cy="282" r="6" fill="#ED1C24"/>
+              <rect x="62" y="288" width="12" height="14" rx="2" fill="#ED1C24"/>
+              <line x1="62" y1="292" x2="54" y2="300" stroke="#ED1C24" stroke-width="2.5"/>
+              <line x1="74" y1="292" x2="82" y2="300" stroke="#ED1C24" stroke-width="2.5"/>
+              <line x1="64" y1="302" x2="61" y2="313" stroke="#ED1C24" stroke-width="2.5"/>
+              <line x1="70" y1="302" x2="73" y2="313" stroke="#ED1C24" stroke-width="2.5"/>
+              <circle cx="100" cy="282" r="6" fill="#4a4a4a"/>
+              <rect x="94" y="288" width="12" height="14" rx="2" fill="#4a4a4a"/>
+              <line x1="94" y1="292" x2="86" y2="300" stroke="#4a4a4a" stroke-width="2.5"/>
+              <line x1="106" y1="292" x2="114" y2="300" stroke="#4a4a4a" stroke-width="2.5"/>
+              <line x1="96" y1="302" x2="93" y2="313" stroke="#4a4a4a" stroke-width="2.5"/>
+              <line x1="102" y1="302" x2="105" y2="313" stroke="#4a4a4a" stroke-width="2.5"/>
+              <text x="85" y="328" text-anchor="middle" font-size="8" fill="#666">org laptop</text>
+
+              <!-- LAPTOP 2: Optional (full opacity for coach context) -->
+              <rect x="155" y="182" width="100" height="76" rx="6" fill="#eaeaea" stroke="#999" stroke-width="1.5" stroke-dasharray="5,3"/>
+              <rect x="162" y="190" width="86" height="54" rx="4" fill="#444"/>
+              <rect x="167" y="195" width="34" height="3" rx="1" fill="#ED1C24" opacity="0.8"/>
+              <rect x="167" y="202" width="68" height="2" rx="1" fill="#666"/>
+              <rect x="167" y="208" width="52" height="2" rx="1" fill="#666"/>
+              <rect x="147" y="258" width="116" height="7" rx="3.5" fill="#bbb"/>
+              <circle cx="188" cy="282" r="6" fill="#777"/>
+              <rect x="182" y="288" width="12" height="14" rx="2" fill="#777"/>
+              <line x1="182" y1="292" x2="174" y2="300" stroke="#777" stroke-width="2"/>
+              <line x1="194" y1="292" x2="202" y2="300" stroke="#777" stroke-width="2"/>
+              <line x1="184" y1="302" x2="181" y2="313" stroke="#777" stroke-width="2"/>
+              <line x1="190" y1="302" x2="193" y2="313" stroke="#777" stroke-width="2"/>
+              <circle cx="218" cy="282" r="6" fill="#777"/>
+              <rect x="212" y="288" width="12" height="14" rx="2" fill="#777"/>
+              <line x1="212" y1="292" x2="204" y2="300" stroke="#777" stroke-width="2"/>
+              <line x1="224" y1="292" x2="232" y2="300" stroke="#777" stroke-width="2"/>
+              <line x1="214" y1="302" x2="211" y2="313" stroke="#777" stroke-width="2"/>
+              <line x1="220" y1="302" x2="223" y2="313" stroke="#777" stroke-width="2"/>
+              <text x="205" y="328" text-anchor="middle" font-size="8" fill="#888">optional</text>
+
+              <!-- LAPTOP 3: Optional (full opacity for coach context) -->
+              <rect x="270" y="182" width="100" height="76" rx="6" fill="#eaeaea" stroke="#999" stroke-width="1.5" stroke-dasharray="5,3"/>
+              <rect x="277" y="190" width="86" height="54" rx="4" fill="#444"/>
+              <rect x="282" y="195" width="30" height="3" rx="1" fill="#ED1C24" opacity="0.8"/>
+              <rect x="282" y="202" width="62" height="2" rx="1" fill="#666"/>
+              <rect x="282" y="208" width="48" height="2" rx="1" fill="#666"/>
+              <rect x="262" y="258" width="116" height="7" rx="3.5" fill="#bbb"/>
+              <circle cx="303" cy="282" r="6" fill="#777"/>
+              <rect x="297" y="288" width="12" height="14" rx="2" fill="#777"/>
+              <line x1="297" y1="292" x2="289" y2="300" stroke="#777" stroke-width="2"/>
+              <line x1="309" y1="292" x2="317" y2="300" stroke="#777" stroke-width="2"/>
+              <line x1="299" y1="302" x2="296" y2="313" stroke="#777" stroke-width="2"/>
+              <line x1="305" y1="302" x2="308" y2="313" stroke="#777" stroke-width="2"/>
+              <circle cx="333" cy="282" r="6" fill="#777"/>
+              <rect x="327" y="288" width="12" height="14" rx="2" fill="#777"/>
+              <line x1="327" y1="292" x2="319" y2="300" stroke="#777" stroke-width="2"/>
+              <line x1="339" y1="292" x2="347" y2="300" stroke="#777" stroke-width="2"/>
+              <line x1="329" y1="302" x2="326" y2="313" stroke="#777" stroke-width="2"/>
+              <line x1="335" y1="302" x2="338" y2="313" stroke="#777" stroke-width="2"/>
+              <text x="320" y="328" text-anchor="middle" font-size="8" fill="#888">optional</text>
+
+              <text x="200" y="338" text-anchor="middle" font-size="9" fill="#666">Push and Pull every laptop after each practice</text>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 6: FLL SCENARIO -->
+    <div class="slide" id="slide-7">
+      <div class="slide-inner">
+        <div class="slide-content">
+          <div class="slide-section-label">Section 06 — The FLL Scenario</div>
+          <h1 class="slide-title">Practice without <em>waiting in line.</em></h1>
+          <div class="slide-body">
+            <p><strong>During practice:</strong> Maya opens <code style="font-family:var(--font-mono);font-size:13px;background:#f5f5f5;padding:1px 5px;border-radius:3px;">mission_two.py</code> and refines her arm motor timing. Jonah opens <code style="font-family:var(--font-mono);font-size:13px;background:#f5f5f5;padding:1px 5px;border-radius:3px;">mission_four.py</code> and adjusts his gyro turn. Both commit when they hit good stopping points. No wifi needed. No waiting.</p>
+            <p><strong>That evening:</strong> Coach connects both laptops to wifi at home and pushes to GitHub. Both students' commits are now safely in the cloud.</p>
+            <p><strong>Before next practice:</strong> Coach pulls on every laptop. Everyone starts with the complete, merged history. No zip file. No thumb drive. No lost work.</p>
+          </div>
+        </div>
+        <div class="slide-visual">
+          <div class="diagram-wrap">
+            <svg viewBox="0 0 340 300" xmlns="http://www.w3.org/2000/svg" font-family="DM Mono, monospace">
+              <!-- Timeline -->
+              <line x1="30" y1="30" x2="310" y2="30" stroke="#e0e0e0" stroke-width="1.5"/>
+
+              <!-- Phase markers -->
+              <rect x="20" y="15" width="90" height="14" rx="3" fill="#f5f5f5" stroke="#e0e0e0"/>
+              <text x="65" y="25" text-anchor="middle" font-size="9" fill="#666">Practice</text>
+
+              <rect x="130" y="15" width="80" height="14" rx="3" fill="#f5f5f5" stroke="#e0e0e0"/>
+              <text x="170" y="25" text-anchor="middle" font-size="9" fill="#666">At Home</text>
+
+              <rect x="230" y="15" width="80" height="14" rx="3" fill="#f5f5f5" stroke="#e0e0e0"/>
+              <text x="270" y="25" text-anchor="middle" font-size="9" fill="#666">Next Practice</text>
+
+              <!-- Maya's laptop -->
+              <rect x="20" y="50" width="80" height="50" rx="4" fill="#fff0f0" stroke="#ED1C24" stroke-width="1.5"/>
+              <text x="60" y="68" text-anchor="middle" font-size="9" fill="#ED1C24" font-weight="500">Maya</text>
+              <text x="60" y="80" text-anchor="middle" font-size="8" fill="#666">mission_two.py</text>
+              <text x="60" y="91" text-anchor="middle" font-size="8" fill="#ED1C24">● commit</text>
+
+              <!-- Jonah's laptop -->
+              <rect x="20" y="115" width="80" height="50" rx="4" fill="#f0f0ff" stroke="#4a4a4a" stroke-width="1.5"/>
+              <text x="60" y="133" text-anchor="middle" font-size="9" fill="#4a4a4a" font-weight="500">Jonah</text>
+              <text x="60" y="145" text-anchor="middle" font-size="8" fill="#666">mission_four.py</text>
+              <text x="60" y="156" text-anchor="middle" font-size="8" fill="#4a4a4a">● commit</text>
+
+              <!-- Coach at home -->
+              <rect x="130" y="60" width="80" height="80" rx="4" fill="#f5f5f5" stroke="#ccc" stroke-width="1.5"/>
+              <text x="170" y="82" text-anchor="middle" font-size="9" fill="#666" font-weight="500">Coach</text>
+              <text x="170" y="98" text-anchor="middle" font-size="8" fill="#ED1C24">↑ Push</text>
+              <text x="170" y="112" text-anchor="middle" font-size="8" fill="#666">both laptops</text>
+              <text x="170" y="126" text-anchor="middle" font-size="8" fill="#666">to GitHub</text>
+
+              <!-- Cloud -->
+              <ellipse cx="170" cy="195" rx="30" ry="14" fill="#e8e8e8" stroke="#ccc" stroke-width="1"/>
+              <text x="170" y="199" text-anchor="middle" font-size="8" fill="#999">GitHub ✓</text>
+
+              <!-- Next practice -->
+              <rect x="230" y="50" width="80" height="130" rx="4" fill="#f5f5f5" stroke="#ccc" stroke-width="1.5"/>
+              <text x="270" y="72" text-anchor="middle" font-size="9" fill="#666" font-weight="500">All laptops</text>
+              <text x="270" y="86" text-anchor="middle" font-size="8" fill="#1a1a1a">↓ Pull</text>
+              <text x="270" y="100" text-anchor="middle" font-size="8" fill="#666">Maya's commits</text>
+              <text x="270" y="114" text-anchor="middle" font-size="8" fill="#666">Jonah's commits</text>
+              <text x="270" y="130" text-anchor="middle" font-size="8" fill="#666">—</text>
+              <text x="270" y="144" text-anchor="middle" font-size="8" fill="#1a1a1a" font-weight="500">Everyone in sync</text>
+              <text x="270" y="158" text-anchor="middle" font-size="8" fill="#666">ready to go</text>
+
+              <!-- Arrows -->
+              <line x1="102" y1="75" x2="128" y2="90" stroke="#ED1C24" stroke-width="1.5" marker-end="url(#arr-s1)"/>
+              <line x1="102" y1="140" x2="128" y2="120" stroke="#4a4a4a" stroke-width="1.5" marker-end="url(#arr-s2)"/>
+              <line x1="170" y1="142" x2="170" y2="179" stroke="#ccc" stroke-width="1.5" marker-end="url(#arr-s3)"/>
+              <line x1="200" y1="195" x2="228" y2="160" stroke="#ccc" stroke-width="1.5" marker-end="url(#arr-s4)"/>
+
+              <defs>
+                <marker id="arr-s1" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto"><path d="M0,0 L0,6 L7,3 z" fill="#ED1C24"/></marker>
+                <marker id="arr-s2" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto"><path d="M0,0 L0,6 L7,3 z" fill="#4a4a4a"/></marker>
+                <marker id="arr-s3" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto"><path d="M0,0 L0,6 L7,3 z" fill="#ccc"/></marker>
+                <marker id="arr-s4" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto"><path d="M0,0 L0,6 L7,3 z" fill="#ccc"/></marker>
+              </defs>
+
+              <!-- Summary -->
+              <text x="170" y="240" text-anchor="middle" font-size="10" fill="#4a4a4a">No zip file. No thumb drive. No lost work.</text>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 7: UNDOING A COMMIT -->
+    <div class="slide" id="slide-8">
+      <div class="slide-inner">
+        <div class="slide-content">
+          <div class="slide-section-label">Section 07 — Undoing a Commit</div>
+          <h1 class="slide-title">Made a mistake? <em>You can fix it</em> before it leaves your laptop.</h1>
+          <div class="slide-body">
+            <p>If you commit something by accident — wrong file, bad change, incomplete work — you can undo it in GitHub Desktop before the coach pushes. Everything to the left of the push boundary is yours to fix.</p>
+            <p><strong>In GitHub Desktop:</strong> right-click the commit in the History tab and choose "Undo." Your files go back to where they were before that commit, and you can start fresh.</p>
+            <div class="callout">Once a commit is pushed to GitHub, the coach handles any reversals. This is another reason push being coach-managed is a safety feature, not a limitation.</div>
+          </div>
+        </div>
+        <div class="slide-visual">
+          <div class="diagram-wrap" style="max-width:380px;">
+            <svg viewBox="0 0 340 260" xmlns="http://www.w3.org/2000/svg" font-family="DM Sans, sans-serif">
+
+              <!-- Step 1: You committed something wrong -->
+              <rect x="20" y="20" width="300" height="60" rx="10" fill="#fff5f5" stroke="#ED1C24" stroke-width="1.5"/>
+              <text x="40" y="44" font-size="12" fill="#ED1C24" font-weight="600">Oops! Bad commit.</text>
+              <text x="40" y="62" font-size="11" fill="#666">You committed by mistake before coach pushed.</text>
+
+              <!-- Down arrow -->
+              <line x1="170" y1="82" x2="170" y2="106" stroke="#ccc" stroke-width="2" marker-end="url(#arr-dn7)"/>
+
+              <!-- Step 2: Open GitHub Desktop -->
+              <rect x="20" y="108" width="300" height="54" rx="10" fill="#f5f5ff" stroke="#9999cc" stroke-width="1.5"/>
+              <text x="40" y="130" font-size="12" fill="#333" font-weight="600">Open GitHub Desktop</text>
+              <text x="40" y="150" font-size="11" fill="#666">Click the History tab. See your commits.</text>
+
+              <!-- Down arrow -->
+              <line x1="170" y1="164" x2="170" y2="188" stroke="#ccc" stroke-width="2" marker-end="url(#arr-dn7)"/>
+
+              <!-- Step 3: Right-click undo -->
+              <rect x="20" y="190" width="300" height="54" rx="10" fill="#f5fff5" stroke="#44aa66" stroke-width="1.5"/>
+              <text x="40" y="212" font-size="12" fill="#1a7a3a" font-weight="600">Right-click → Undo Commit</text>
+              <text x="40" y="232" font-size="11" fill="#666">Your files go back. Try again. No harm done! ✓</text>
+
+              <!-- Safety note badge -->
+              <rect x="60" y="252" width="220" height="0" rx="4" fill="none"/>
+
+              <defs>
+                <marker id="arr-dn7" markerWidth="8" markerHeight="8" refX="4" refY="2" orient="auto">
+                  <path d="M0,0 L4,8 L8,0 z" fill="#ccc"/>
+                </marker>
+              </defs>
+            </svg>
+
+            <!-- Safety note below diagram -->
+            <div style="margin-top:12px; padding:10px 14px; background:#f9f9f9; border-left:3px solid #ED1C24; border-radius:0 6px 6px 0; font-size:12px; color:#666; line-height:1.5;">
+              <strong style="color:#1a1a1a;">Only works before Push.</strong> Once the coach pushes to GitHub, the coach handles any fixes. That's why Push being the coach's job is a safety net.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 8: VIEWING HISTORY -->
+    <div class="slide" id="slide-9">
+      <div class="slide-inner">
+        <div class="slide-content">
+          <div class="slide-section-label">Section 08 — History</div>
+          <h1 class="slide-title">Every change has an <em>author, a date, and a reason.</em></h1>
+          <div class="slide-body">
+            <p>GitHub Desktop's History tab shows every commit ever made — who did it, when, and the message they wrote. This is why commit messages matter. A message like <em>"fixed stuff"</em> is useless two weeks later. A message like <em>"reduced arm speed from 80 to 60 for mission 3 — was overshooting"</em> tells the whole story.</p>
+            <p><strong>Good commit messages are a gift to your future self</strong> — and to every teammate who needs to understand what changed and why.</p>
+          </div>
+        </div>
+        <div class="slide-visual">
+          <div class="commit-log">
+            <div class="commit-entry">
+              <div class="commit-hash">d2a1b7</div>
+              <div class="commit-msg">mission 1: fixed base return path — was overshooting by 15cm</div>
+              <div class="commit-meta">Sam &nbsp;·&nbsp; Wed Sep 16, 4:42 pm</div>
+            </div>
+            <div class="commit-entry">
+              <div class="commit-hash">c9f5a3</div>
+              <div class="commit-msg">mission 4: gyro turn adjusted left 3 degrees, now hits target</div>
+              <div class="commit-meta">Maya &nbsp;·&nbsp; Wed Sep 12, 4:18 pm</div>
+            </div>
+            <div class="commit-entry">
+              <div class="commit-hash">b8d4e2</div>
+              <div class="commit-msg">mission 3: arm motor speed reduced from 80 to 60 — was overshooting</div>
+              <div class="commit-meta">Jonah &nbsp;·&nbsp; Wed Sep 9, 5:01 pm</div>
+            </div>
+            <div class="commit-entry" style="opacity:0.5">
+              <div class="commit-hash">a3f2c1</div>
+              <div class="commit-msg">initial base code from chapter</div>
+              <div class="commit-meta">Coach &nbsp;·&nbsp; Wed Sep 4, 3:30 pm</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 9: PRE-COMPETITION EXCEPTION -->
+    <div class="slide" id="slide-10">
+      <div class="slide-inner">
+        <div class="slide-content">
+          <div class="slide-section-label">Section 09 — Competition Day</div>
+          <h1 class="slide-title">Sometimes <em>one laptop</em> is the right choice.</h1>
+          <div class="slide-body">
+            <p><strong>What does "parallelize" mean?</strong> It means multiple people working at the same time on different things — like two students coding on two laptops simultaneously. That's exactly what this workflow normally enables.</p>
+            <p><strong>But on competition day, the team uses a single laptop.</strong> Not because git is hard — but because competition day is stressful, changes happen fast between runs, and this is not the moment to introduce git workflow steps that could cause confusion or mistakes.</p>
+            <p><strong>One laptop. One source of truth.</strong> Everyone sees every change instantly. No merging needed afterward.</p>
+            <div class="callout">This is a deliberate process decision, not a step backward. Knowing when to simplify is just as important as knowing when to parallelize.</div>
+            <p>After the competition, the normal multi-laptop workflow resumes.</p>
+          </div>
+        </div>
+        <div class="slide-visual">
+          <div class="diagram-wrap">
+            <svg viewBox="0 0 340 280" xmlns="http://www.w3.org/2000/svg" font-family="DM Mono, monospace">
+              <defs>
+                <marker id="arr-up2" markerWidth="8" markerHeight="8" refX="4" refY="6" orient="auto">
+                  <path d="M0,8 L4,0 L8,8 z" fill="#ED1C24"/>
+                </marker>
+                <marker id="arr-down2" markerWidth="8" markerHeight="8" refX="4" refY="2" orient="auto">
+                  <path d="M0,0 L4,8 L8,0 z" fill="#1a1a1a"/>
+                </marker>
+              </defs>
+              <!-- GitHub logo -->
+              <image href="data:image/png;base64,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" x="145" y="8" width="50" height="50" preserveAspectRatio="xMidYMid meet"/>
+              <text x="170" y="65" text-anchor="middle" font-size="9" fill="#666">GitHub</text>
+
+              <!-- Push/Pull arrows to single active laptop -->
+              <line x1="100" y1="152" x2="135" y2="98" stroke="#ED1C24" stroke-width="2" marker-end="url(#arr-up2)"/>
+              <line x1="145" y1="98" x2="120" y2="152" stroke="#1a1a1a" stroke-width="2" marker-end="url(#arr-down2)"/>
+
+              <!-- PRIMARY LAPTOP (active, full) -->
+              <rect x="40" y="155" width="130" height="85" rx="6" fill="#f0f0f0" stroke="#ED1C24" stroke-width="2"/>
+              <rect x="48" y="163" width="114" height="62" rx="4" fill="#1a1a1a"/>
+              <rect x="52" y="168" width="42" height="3" rx="1" fill="#ED1C24"/>
+              <rect x="52" y="175" width="82" height="2" rx="1" fill="#4a4a4a"/>
+              <rect x="52" y="181" width="65" height="2" rx="1" fill="#4a4a4a"/>
+              <rect x="36" y="240" width="138" height="7" rx="3.5" fill="#bbb"/>
+              <text x="105" y="265" text-anchor="middle" font-size="9" fill="#ED1C24" font-weight="500">Competition day — one laptop</text>
+
+              <!-- Optional Laptop 2 (very dimmed) -->
+              <g opacity="0.18">
+                <rect x="210" y="165" width="90" height="62" rx="6" fill="#f0f0f0" stroke="#bbb" stroke-width="1" stroke-dasharray="5,3"/>
+                <rect x="217" y="172" width="76" height="44" rx="4" fill="#ccc"/>
+              </g>
+
+              <!-- Optional Laptop 3 (very dimmed) -->
+              <g opacity="0.1">
+                <rect x="310" y="175" width="25" height="18" rx="3" fill="#f0f0f0" stroke="#bbb" stroke-width="1"/>
+              </g>
+
+              <text x="170" y="285" text-anchor="middle" font-size="9" fill="#999">Optional laptops inactive during competition practice</text>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 10: TAGGING -->
+    <div class="slide" id="slide-11">
+      <div class="slide-inner">
+        <div class="slide-content">
+          <div class="slide-section-label">Section 10 — Competition Release</div>
+          <h1 class="slide-title">Tag the code after every <em>competition.</em></h1>
+          <div class="slide-body">
+            <p>After a competition — before resuming development — the coach creates a tag. A tag is a named, permanent bookmark on the commit history. It says: <em>this is exactly what we ran at that event.</em></p>
+            <p><strong>Naming convention:</strong></p>
+            <div class="tag-example">
+              <span class="tag-label">format</span>
+              [team-number]-[team-name]-[event]-[year]
+              <span class="tag-label" style="margin-top:10px;">examples</span>
+              27041-thought-process-qualifier-2025<br>
+              27041-thought-process-robonautica-2025
+            </div>
+            <p>If scores drop after a later practice, the team can sync back to the competition tag, compare what changed, and isolate the regression. This is a real engineering workflow — and it works.</p>
+          </div>
+        </div>
+        <div class="slide-visual">
+          <div class="diagram-wrap">
+            <svg viewBox="0 0 340 220" xmlns="http://www.w3.org/2000/svg" font-family="DM Mono, monospace">
+              <defs>
+                <marker id="arr-tl" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto">
+                  <path d="M0,0 L0,6 L7,3 z" fill="#ED1C24"/>
+                </marker>
+              </defs>
+
+              <!-- Timeline -->
+              <line x1="20" y1="100" x2="320" y2="100" stroke="#e0e0e0" stroke-width="2"/>
+
+              <!-- Pre-competition commits -->
+              <circle cx="50" cy="100" r="7" fill="#ccc"/>
+              <circle cx="90" cy="100" r="7" fill="#ccc"/>
+              <circle cx="130" cy="100" r="7" fill="#ccc"/>
+
+              <!-- Competition commit (tagged) -->
+              <circle cx="180" cy="100" r="10" fill="#ED1C24"/>
+
+              <!-- Tag flag - positioned above, clear of text -->
+              <line x1="180" y1="89" x2="180" y2="54" stroke="#ED1C24" stroke-width="1.5"/>
+              <polygon points="180,54 214,62 180,70" fill="#ED1C24"/>
+              <text x="218" y="62" font-size="9" fill="#ED1C24" font-weight="500">27041-thought-process</text>
+              <text x="218" y="74" font-size="9" fill="#ED1C24" font-weight="500">-robonautica-2025</text>
+
+              <!-- "competition" label below dot -->
+              <text x="180" y="120" text-anchor="middle" font-size="8" fill="#ED1C24">competition</text>
+
+              <!-- Post-competition commits -->
+              <circle cx="230" cy="100" r="7" fill="#ccc"/>
+              <circle cx="270" cy="100" r="7" fill="#ccc"/>
+              <circle cx="310" cy="100" r="7" fill="#ccc"/>
+
+              <!-- "post-competition" label well below commits -->
+              <text x="270" y="140" text-anchor="middle" font-size="8" fill="#aaa">post-competition development</text>
+
+              <!-- Compare-back arrow — routed below the timeline to avoid overlap -->
+              <path d="M300 112 Q300 165 190 165 Q180 165 180 112" fill="none" stroke="#4a4a4a" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arr-tl)"/>
+              <text x="245" y="182" text-anchor="middle" font-size="9" fill="#4a4a4a">sync back here if scores drop</text>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 11: GROUND RULES -->
+    <div class="slide" id="slide-12">
+      <div class="slide-inner">
+        <div class="slide-content">
+          <div class="slide-section-label">Section 11 — Ground Rules</div>
+          <h1 class="slide-title">Five rules that keep <em>everything running smoothly.</em></h1>
+          <div class="slide-body">
+            <div class="step-list">
+              <div class="step-item">
+                <div class="step-num">01</div>
+                <div class="step-text"><strong>One group per mission, per practice.</strong>Assign each mission to one group for the session — students often work in pairs. If two people are working on <code style="font-family:var(--font-mono);font-size:11px;background:#f5f5f5;padding:1px 4px;border-radius:3px;">mission_three.py</code>, they should share one laptop. Opening the same mission file on two laptops at once causes merge conflicts when the coach integrates.</div>
+              </div>
+              <div class="step-item">
+                <div class="step-num">02</div>
+                <div class="step-text"><strong>Write a useful commit message.</strong>Your future self will thank you. "fixed stuff" tells nobody anything.</div>
+              </div>
+              <div class="step-item">
+                <div class="step-num">03</div>
+                <div class="step-text"><strong>Pull before you start each session.</strong>Always begin with the latest code. Coaches pull before practice starts.</div>
+              </div>
+              <div class="step-item">
+                <div class="step-num">04</div>
+                <div class="step-text"><strong>Push is the coach's job.</strong>Students commit; coaches push. This protects GitHub from accidental overwrites.</div>
+              </div>
+              <div class="step-item">
+                <div class="step-num">05</div>
+                <div class="step-text"><strong>Tag after every competition.</strong>Before resuming development, the coach creates a tag. The competition run is preserved forever.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="slide-visual">
+          <!-- Commit message contrast table -->
+          <div style="width:100%;max-width:340px;">
+            <table class="contrast-table">
+              <thead>
+                <tr>
+                  <th class="good">✓ &nbsp;Useful</th>
+                  <th class="bad">✕ &nbsp;Not helpful</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="good">mission 3: arm speed 80→60, was overshooting the platform</td>
+                  <td class="bad">fixed stuff</td>
+                </tr>
+                <tr>
+                  <td class="good">mission 4: gyro turn left +3 degrees, now hits target reliably</td>
+                  <td class="bad">changes</td>
+                </tr>
+                <tr>
+                  <td class="good">mission 1: return path corrected, was short by 15cm</td>
+                  <td class="bad">updated mission 1</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 12: TRY IT -->
+    <div class="slide" id="slide-13">
+      <div class="slide-inner full-width">
+        <div class="slide-content" style="max-width:700px;margin:0 auto;justify-content:center;">
+          <div class="slide-section-label">Section 12 — Try It</div>
+          <h1 class="slide-title">Your first commit starts <em>right now.</em></h1>
+          <div class="slide-body">
+            <p>Your laptop is already set up. The repository is there. Here's all you need to do today:</p>
+          </div>
+          <div class="step-list" style="margin-top:24px;max-width:520px;">
+            <div class="step-item">
+              <div class="step-num" style="font-size:18px;min-width:32px;">01</div>
+              <div class="step-text" style="font-size:15px;"><strong>Open your mission file</strong>Find your assigned <code style="font-family:var(--font-mono);font-size:13px;background:#f5f5f5;padding:1px 5px;border-radius:3px;">mission_X.py</code> in VS Code. Make a small edit — even just add a comment with your name.</div>
+            </div>
+            <div class="step-item">
+              <div class="step-num" style="font-size:18px;min-width:32px;">02</div>
+              <div class="step-text" style="font-size:15px;"><strong>Open GitHub Desktop</strong>You'll see your change listed. It knows what you did.</div>
+            </div>
+            <div class="step-item">
+              <div class="step-num" style="font-size:18px;min-width:32px;">03</div>
+              <div class="step-text" style="font-size:15px;"><strong>Write a commit message</strong>In the box at the bottom left, describe what you changed. Be specific.</div>
+            </div>
+            <div class="step-item">
+              <div class="step-num" style="font-size:18px;min-width:32px;">04</div>
+              <div class="step-text" style="font-size:15px;"><strong>Click "Commit to main"</strong>That's it. Your work is saved, timestamped, and authored. Coach will push tonight.</div>
+            </div>
+          </div>
+          <div class="callout" style="max-width:520px;margin-top:24px;">You just used professional software version control. The same workflow used by engineers at every major software company in the world.</div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- end slide-container -->
+
+  <!-- FOOTER -->
+  <div id="slide-footer">
+    <img src="data:image/jpeg;base64,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" alt="FIRST Lego League" class="footer-logo">
+    <span id="slide-counter">1 / 14</span>
+    <div class="footer-nav">
+      <button class="nav-btn" onclick="prevSlide()" title="Previous (←)">&#8592;</button>
+      <button class="nav-btn" onclick="nextSlide()" title="Next (→)">&#8594;</button>
+    </div>
+  </div>
+</div><!-- end main-area -->
+
+<script>
+let current = 0;
+const total = 14;
+
+function goTo(n) {
+  document.getElementById('slide-' + current).classList.remove('active');
+  document.querySelectorAll('#nav-list li')[current].classList.remove('active');
+  current = Math.max(0, Math.min(n, total - 1));
+  document.getElementById('slide-' + current).classList.add('active');
+  document.querySelectorAll('#nav-list li')[current].classList.add('active');
+  document.getElementById('slide-counter').textContent = (current + 1) + ' / ' + total;
+}
+
+function nextSlide() { goTo(current + 1); }
+function prevSlide() { goTo(current - 1); }
+
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('collapsed');
+  document.body.classList.toggle('sidebar-collapsed');
+}
+
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown') { nextSlide(); e.preventDefault(); }
+  if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') { prevSlide(); e.preventDefault(); }
+});
+</script>
+</body>
+</html>
