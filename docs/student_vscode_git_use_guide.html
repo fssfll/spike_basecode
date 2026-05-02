@@ -1,0 +1,1374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bolton Robotics — Student Coding Session Guide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,400;0,500;1,400&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --red:        #ED1C24;
+    --black:      #1A1A1A;
+    --gray-dark:  #4A4A4A;
+    --gray-mid:   #9A9A9A;
+    --gray-line:  #E0E0E0;
+    --gray-light: #F5F5F5;
+    --white:      #FFFFFF;
+    --green:      #2DA44E;
+    --blue:       #0969DA;
+    --amber:      #FB8C00;
+    --hat-yellow: #FFCA28;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 400;
+    color: var(--black);
+    background: var(--white);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .accent-bar { height: 6px; background: var(--red); flex-shrink: 0; }
+
+  /* ── HEADER ── */
+  header {
+    padding: 24px 48px 22px;
+    border-bottom: 1px solid var(--gray-line);
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 20px;
+    align-items: center;
+    background-image: radial-gradient(#E8E8E8 1px, transparent 1px);
+    background-size: 18px 18px;
+    background-color: var(--white);
+  }
+
+  .back-link {
+    display: inline-block;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--gray-mid);
+    text-decoration: none;
+    margin-bottom: 14px;
+    transition: color 0.15s;
+  }
+
+  .back-link:hover { color: var(--red); }
+
+  .section-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--red);
+    margin-bottom: 6px;
+  }
+
+  header h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 26px;
+    font-weight: 400;
+    line-height: 1.2;
+    margin-bottom: 8px;
+  }
+
+  header h1 em { font-style: italic; }
+
+  .audience-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    background: white;
+    border: 1px solid var(--gray-line);
+    border-left: 3px solid var(--red);
+    padding: 4px 10px;
+    border-radius: 0 2px 2px 0;
+    margin-bottom: 10px;
+  }
+
+  .audience-tag span {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--red);
+  }
+
+  .audience-tag p { font-size: 12px; color: var(--gray-dark); }
+
+  .header-intro {
+    font-size: 13px;
+    color: var(--gray-dark);
+    line-height: 1.65;
+    max-width: 560px;
+  }
+
+  /* ── HEADER FIGURE ── */
+  .header-figure {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    flex-shrink: 0;
+  }
+
+  .fig-float {
+    animation: float 3.2s ease-in-out infinite;
+    display: block;
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-5px); }
+  }
+
+  /* ── SPEECH BUBBLES ── */
+  .speech-bubble {
+    position: relative;
+    background: #FFFDE7;
+    border: 2px solid var(--hat-yellow);
+    border-radius: 12px;
+    padding: 9px 13px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--black);
+    line-height: 1.5;
+    max-width: 150px;
+    align-self: center;
+  }
+
+  .speech-bubble::before {
+    content: '';
+    position: absolute;
+    right: 100%;
+    top: 13px;
+    border: 8px solid transparent;
+    border-right-color: var(--hat-yellow);
+  }
+
+  .speech-bubble::after {
+    content: '';
+    position: absolute;
+    right: calc(100% - 2px);
+    top: 15px;
+    border: 6px solid transparent;
+    border-right-color: #FFFDE7;
+    z-index: 1;
+  }
+
+  /* Warn variant */
+  .speech-bubble-warn {
+    background: #FFF3E0;
+    border-color: var(--amber);
+    max-width: 100%;
+  }
+
+  .speech-bubble-warn::before { border-right-color: var(--amber); }
+  .speech-bubble-warn::after { border-right-color: #FFF3E0; }
+
+  /* Success variant */
+  .speech-bubble-success {
+    background: #F1F8E9;
+    border-color: #7CB342;
+    max-width: 100%;
+  }
+
+  .speech-bubble-success::before { border-right-color: #7CB342; }
+  .speech-bubble-success::after { border-right-color: #F1F8E9; }
+
+  /* Callout layout with figure */
+  .char-callout {
+    display: flex;
+    align-items: flex-start;
+    gap: 2px;
+    margin-top: 10px;
+  }
+
+  .char-figure { flex-shrink: 0; }
+
+  /* ── FLOW STRIP ── */
+  .flow-strip {
+    background: var(--gray-light);
+    border-bottom: 1px solid var(--gray-line);
+    padding: 16px 48px;
+  }
+
+  .flow-strip-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--red);
+    margin-bottom: 12px;
+  }
+
+  .flow-steps {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+  }
+
+  .flow-step {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    position: relative;
+  }
+
+  .flow-step:not(:last-child)::after {
+    content: '→';
+    position: absolute;
+    right: -8px;
+    top: 5px;
+    font-size: 13px;
+    color: var(--gray-mid);
+  }
+
+  .flow-icon { font-size: 22px; line-height: 1; flex-shrink: 0; }
+
+  .flow-title {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--black);
+    line-height: 1.3;
+  }
+
+  .flow-sub {
+    font-size: 10.5px;
+    font-weight: 300;
+    color: var(--gray-dark);
+    line-height: 1.4;
+    margin-top: 2px;
+  }
+
+  /* ── MAIN ── */
+  main { display: grid; grid-template-columns: 1fr 1fr; }
+
+  .col { padding: 26px 48px; }
+  .col + .col { border-left: 1px solid var(--gray-line); }
+
+  .col-heading {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--red);
+    margin-bottom: 18px;
+    padding-bottom: 9px;
+    border-bottom: 1px solid var(--gray-line);
+  }
+
+  /* ── STEPS ── */
+  .steps { display: flex; flex-direction: column; gap: 16px; }
+
+  .step {
+    display: grid;
+    grid-template-columns: 34px 1fr;
+    gap: 11px;
+    align-items: start;
+  }
+
+  .step-badge {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: var(--red);
+    color: white;
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    box-shadow: 0 2px 6px rgba(237,28,36,0.25);
+    margin-top: 2px;
+  }
+
+  .step-title {
+    font-size: 13.5px;
+    font-weight: 700;
+    color: var(--black);
+    margin-bottom: 3px;
+    line-height: 1.3;
+  }
+
+  .step-body {
+    font-size: 12px;
+    color: var(--gray-dark);
+    line-height: 1.6;
+  }
+
+  .step-body strong { font-weight: 600; color: var(--black); }
+
+  code {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    background: var(--gray-light);
+    padding: 2px 5px;
+    border-radius: 2px;
+    color: var(--black);
+    border: 1px solid var(--gray-line);
+  }
+
+  /* ── PLAIN CALLOUTS ── */
+  .callout-green {
+    border-left: 3px solid var(--green);
+    padding: 7px 11px;
+    margin-top: 7px;
+    background: #F0FFF4;
+  }
+
+  .callout-green p { font-size: 11.5px; color: var(--gray-dark); line-height: 1.55; }
+  .callout-green strong { font-weight: 600; color: var(--black); }
+
+  .callout-blue {
+    border-left: 3px solid var(--blue);
+    padding: 7px 11px;
+    margin-top: 7px;
+    background: #F0F6FF;
+  }
+
+  .callout-blue p { font-size: 11.5px; color: var(--gray-dark); line-height: 1.55; }
+  .callout-blue strong { font-weight: 600; color: var(--black); }
+
+  /* ── CONE ROW ── */
+  .cone-row {
+    display: flex;
+    align-items: flex-end;
+    margin-top: 10px;
+    margin-bottom: -1px;
+  }
+
+  .cone-dash {
+    flex: 1;
+    border-top: 2px dashed #FFB300;
+    margin-bottom: 9px;
+  }
+
+  /* ── TROUBLESHOOT ── */
+  .troubleshoot {
+    border: 1px solid #FFB300;
+    border-left: 3px solid var(--amber);
+    border-radius: 0 6px 6px 0;
+    padding: 10px 12px;
+    margin-top: 10px;
+    background: #FFF8E1;
+  }
+
+  .ts-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+    margin-bottom: 8px;
+  }
+
+  .ts-bubble {
+    position: relative;
+    background: #FFF3E0;
+    border: 2px solid var(--amber);
+    border-radius: 10px;
+    padding: 7px 10px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #7A4F00;
+    align-self: center;
+    line-height: 1.4;
+  }
+
+  .ts-bubble::before {
+    content: '';
+    position: absolute;
+    right: 100%;
+    top: 10px;
+    border: 7px solid transparent;
+    border-right-color: var(--amber);
+  }
+
+  .ts-bubble::after {
+    content: '';
+    position: absolute;
+    right: calc(100% - 2px);
+    top: 12px;
+    border: 5px solid transparent;
+    border-right-color: #FFF3E0;
+    z-index: 1;
+  }
+
+  .ts-steps { display: flex; flex-direction: column; gap: 5px; }
+
+  .ts-step {
+    display: flex;
+    gap: 8px;
+    font-size: 11.5px;
+    color: var(--gray-dark);
+    line-height: 1.5;
+    align-items: flex-start;
+  }
+
+  .ts-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    font-weight: 600;
+    color: white;
+    background: var(--amber);
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  /* ── SECTION DIVIDER ── */
+  .section-divider {
+    margin: 16px 0 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .section-divider hr { flex: 1; border: none; border-top: 1px solid var(--gray-line); }
+
+  .section-divider span {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--red);
+    white-space: nowrap;
+  }
+
+  /* ── VSCODE MOCKUP ── */
+  .vscode-mockup {
+    border: 1px solid #444;
+    border-radius: 6px;
+    overflow: hidden;
+    margin-top: 8px;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+  }
+
+  .vscode-titlebar {
+    background: #3c3c3c;
+    padding: 5px 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .vscode-dots { display: flex; gap: 5px; }
+  .vscode-dot { width: 10px; height: 10px; border-radius: 50%; }
+  .dot-red { background: #ff5f57; }
+  .dot-yellow { background: #ffbd2e; }
+  .dot-green { background: #28c840; }
+  .vscode-title { font-family: 'DM Sans', sans-serif; font-size: 11px; color: #ccc; flex: 1; text-align: center; }
+
+  .vscode-body { background: #1e1e1e; display: grid; grid-template-columns: 36px 1fr; }
+
+  .vscode-sidebar {
+    background: #2c2c2c;
+    border-right: 1px solid #444;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 8px 0;
+    gap: 14px;
+  }
+
+  .vscode-sidebar-icon { font-size: 15px; opacity: 0.5; }
+  .vscode-sidebar-icon.active { opacity: 1; position: relative; }
+
+  .vscode-sidebar-icon.active::before {
+    content: '';
+    position: absolute;
+    left: -2px;
+    top: 0; bottom: 0;
+    width: 2px;
+    background: var(--red);
+  }
+
+  .vscode-editor { padding: 10px 12px; }
+
+  .vscode-tab {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: #2d2d2d;
+    border: 1px solid #444;
+    border-bottom: none;
+    padding: 3px 10px;
+    font-size: 10.5px;
+    color: #ccc;
+    margin-bottom: 8px;
+    border-radius: 3px 3px 0 0;
+  }
+
+  .tab-dot { width: 6px; height: 6px; border-radius: 50%; background: #e8a44a; }
+
+  .code-line { color: #9cdcfe; line-height: 1.7; font-size: 10.5px; }
+  .code-comment { color: #6a9955; }
+  .code-keyword { color: #c586c0; }
+  .code-fn { color: #dcdcaa; }
+  .code-num { color: #b5cea8; }
+
+  .vscode-debug-bar {
+    background: #2c2c2c;
+    border-top: 1px solid #444;
+    padding: 6px 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .play-btn {
+    width: 22px; height: 22px;
+    background: var(--green);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    color: white;
+    flex-shrink: 0;
+  }
+
+  .debug-dropdown {
+    background: #3c3c3c;
+    border: 1px solid #555;
+    border-radius: 3px;
+    padding: 3px 8px;
+    font-size: 10px;
+    color: #ccc;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .debug-label { font-family: 'DM Sans', sans-serif; font-size: 10px; color: #888; }
+
+  /* ── GITHUB DESKTOP MOCKUP ── */
+  .ghd-mockup {
+    border: 1px solid var(--gray-line);
+    border-radius: 6px;
+    overflow: hidden;
+    margin-top: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px;
+  }
+
+  .ghd-titlebar {
+    background: #24292f;
+    padding: 5px 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .ghd-title { font-size: 11px; color: #8b949e; flex: 1; text-align: center; }
+
+  .ghd-body {
+    background: white;
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    min-height: 150px;
+  }
+
+  .ghd-sidebar {
+    background: #f6f8fa;
+    border-right: 1px solid #d0d7de;
+    padding: 10px;
+  }
+
+  .ghd-sidebar-label {
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #57606a;
+    margin-bottom: 6px;
+  }
+
+  .ghd-changed-file {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 6px;
+    border-radius: 4px;
+    background: #ddf4ff;
+  }
+
+  .ghd-file-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--blue); flex-shrink: 0; }
+  .ghd-file-name { font-size: 11px; color: var(--black); font-family: 'DM Mono', monospace; }
+
+  .ghd-main { padding: 10px; display: flex; flex-direction: column; gap: 7px; }
+
+  .ghd-field-label { font-size: 10px; font-weight: 600; color: #57606a; margin-bottom: 2px; }
+
+  .ghd-input {
+    border: 1px solid #d0d7de;
+    border-radius: 5px;
+    padding: 5px 9px;
+    font-size: 11.5px;
+    color: var(--black);
+    background: white;
+    width: 100%;
+  }
+
+  .ghd-input.filled { border-color: var(--blue); }
+
+  .ghd-textarea {
+    border: 1px solid #d0d7de;
+    border-radius: 5px;
+    padding: 5px 9px;
+    font-size: 11px;
+    color: #8b949e;
+    font-style: italic;
+    background: white;
+    width: 100%;
+    height: 38px;
+  }
+
+  .ghd-commit-btn {
+    background: #2da44e;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 6px 12px;
+    font-size: 12px;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    align-self: flex-start;
+  }
+
+  /* ── CELEBRATE CALLOUT ── */
+  .celebrate-callout {
+    display: flex;
+    align-items: flex-start;
+    gap: 4px;
+    margin-top: 10px;
+  }
+
+  @keyframes bounce {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    25% { transform: translateY(-4px) rotate(-3deg); }
+    75% { transform: translateY(-2px) rotate(3deg); }
+  }
+
+  .fig-celebrate { animation: bounce 0.7s ease-in-out 4; }
+
+  /* ── EXPLORE BOX ── */
+  .explore-box {
+    background:
+      repeating-linear-gradient(0deg,  rgba(25,90,185,0.06) 0px, rgba(25,90,185,0.06) 1px, transparent 1px, transparent 20px),
+      repeating-linear-gradient(90deg, rgba(25,90,185,0.06) 0px, rgba(25,90,185,0.06) 1px, transparent 1px, transparent 20px),
+      linear-gradient(135deg, #EEF4FF 0%, #E8F0FE 100%);
+    border: 1px solid #B8CEED;
+    border-top: 3px solid var(--hat-yellow);
+    border-radius: 0 0 6px 6px;
+    padding: 12px 14px;
+    margin-top: 12px;
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .explore-content {}
+
+  .explore-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--black);
+    margin-bottom: 4px;
+  }
+
+  .explore-body {
+    font-size: 12px;
+    color: var(--gray-dark);
+    line-height: 1.6;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    height: 52px;
+    background: var(--white);
+    border-top: 2px solid var(--red);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 48px;
+    flex-shrink: 0;
+  }
+
+  .footer-left, .footer-right {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--gray-mid);
+  }
+</style>
+</head>
+<body>
+
+<!-- ══ SVG SYMBOL DEFINITIONS (hidden) ══════════════════════════ -->
+<svg style="display:none" xmlns="http://www.w3.org/2000/svg">
+<defs>
+
+<!-- ─── POSE 1: WAVING ─────────────────────────────────────── -->
+<symbol id="fig-wave" viewBox="-15 0 110 125">
+  <!-- body base -->
+  <rect x="15" y="111" width="25" height="7" rx="2" fill="#212121"/>
+  <rect x="40" y="111" width="25" height="7" rx="2" fill="#212121"/>
+  <rect x="18" y="92" width="20" height="22" rx="2" fill="#37474F" stroke="#263238" stroke-width="1.5"/>
+  <rect x="42" y="92" width="20" height="22" rx="2" fill="#37474F" stroke="#263238" stroke-width="1.5"/>
+  <rect x="18" y="82" width="44" height="11" rx="2" fill="#263238" stroke="#1A1A1A" stroke-width="1.5"/>
+  <rect x="16" y="56" width="48" height="27" rx="3" fill="#1565C0" stroke="#0D47A1" stroke-width="1.5"/>
+  <polygon points="16,56 36,56 29,83 16,83" fill="#FF6F00"/>
+  <polygon points="64,56 44,56 51,83 64,83" fill="#FF6F00"/>
+  <rect x="16" y="67" width="20" height="3" rx="1" fill="#FFF176" opacity="0.85"/>
+  <rect x="44" y="67" width="20" height="3" rx="1" fill="#FFF176" opacity="0.85"/>
+  <rect x="33" y="50" width="14" height="7" fill="#FDD835" stroke="#C9A800" stroke-width="1"/>
+  <rect x="22" y="22" width="36" height="29" rx="5" fill="#FDD835" stroke="#C9A800" stroke-width="1.5"/>
+  <!-- face: normal smile -->
+  <circle cx="32" cy="33" r="2.5" fill="#1A1A1A"/>
+  <circle cx="48" cy="33" r="2.5" fill="#1A1A1A"/>
+  <path d="M29,41 Q40,49 51,41" stroke="#1A1A1A" stroke-width="2" fill="none" stroke-linecap="round"/>
+  <!-- hat -->
+  <path d="M16,24 Q20,7 40,7 Q60,7 64,24 Z" fill="#FFCA28" stroke="#C9A800" stroke-width="1.5"/>
+  <ellipse cx="40" cy="24" rx="26" ry="6" fill="#FFCA28" stroke="#C9A800" stroke-width="1.5"/>
+  <circle cx="40" cy="7" r="5" fill="#FFCA28" stroke="#C9A800" stroke-width="1.5"/>
+  <ellipse cx="36" cy="13" rx="8" ry="4" fill="white" opacity="0.2"/>
+  <!-- left arm: slightly out (rotate 10) -->
+  <g transform="rotate(10, 10.5, 60)">
+    <rect x="5" y="60" width="11" height="20" rx="3" fill="#1565C0" stroke="#0D47A1" stroke-width="1.5"/>
+    <circle cx="10.5" cy="83" r="6" fill="#FDD835" stroke="#C9A800" stroke-width="1.5"/>
+  </g>
+  <!-- right arm: waving up (rotate -130) -->
+  <g transform="rotate(-130, 69.5, 60)">
+    <rect x="64" y="60" width="11" height="20" rx="3" fill="#1565C0" stroke="#0D47A1" stroke-width="1.5"/>
+    <circle cx="69.5" cy="83" r="6" fill="#FDD835" stroke="#C9A800" stroke-width="1.5"/>
+  </g>
+</symbol>
+
+<!-- ─── POSE 2: POINTING RIGHT ─────────────────────────────── -->
+<symbol id="fig-point" viewBox="-15 0 110 125">
+  <rect x="15" y="111" width="25" height="7" rx="2" fill="#212121"/>
+  <rect x="40" y="111" width="25" height="7" rx="2" fill="#212121"/>
+  <rect x="18" y="92" width="20" height="22" rx="2" fill="#37474F" stroke="#263238" stroke-width="1.5"/>
+  <rect x="42" y="92" width="20" height="22" rx="2" fill="#37474F" stroke="#263238" stroke-width="1.5"/>
+  <rect x="18" y="82" width="44" height="11" rx="2" fill="#263238" stroke="#1A1A1A" stroke-width="1.5"/>
+  <rect x="16" y="56" width="48" height="27" rx="3" fill="#1565C0" stroke="#0D47A1" stroke-width="1.5"/>
+  <polygon points="16,56 36,56 29,83 16,83" fill="#FF6F00"/>
+  <polygon points="64,56 44,56 51,83 64,83" fill="#FF6F00"/>
+  <rect x="16" y="67" width="20" height="3" rx="1" fill="#FFF176" opacity="0.85"/>
+  <rect x="44" y="67" width="20" height="3" rx="1" fill="#FFF176" opacity="0.85"/>
+  <rect x="33" y="50" width="14" height="7" fill="#FDD835" stroke="#C9A800" stroke-width="1"/>
+  <rect x="22" y="22" width="36" height="29" rx="5" fill="#FDD835" stroke="#C9A800" stroke-width="1.5"/>
+  <!-- face: confident smile -->
+  <circle cx="32" cy="33" r="2.5" fill="#1A1A1A"/>
+  <circle cx="48" cy="33" r="2.5" fill="#1A1A1A"/>
+  <path d="M30,41 Q40,48 50,41" stroke="#1A1A1A" stroke-width="2" fill="none" stroke-linecap="round"/>
+  <!-- hat -->
+  <path d="M16,24 Q20,7 40,7 Q60,7 64,24 Z" fill="#FFCA28" stroke="#C9A800" stroke-width="1.5"/>
+  <ellipse cx="40" cy="24" rx="26" ry="6" fill="#FFCA28" stroke="#C9A800" stroke-width="1.5"/>
+  <circle cx="40" cy="7" r="5" fill="#FFCA28" stroke="#C9A800" stroke-width="1.5"/>
+  <ellipse cx="36" cy="13" rx="8" ry="4" fill="white" opacity="0.2"/>
+  <!-- left arm: at side (rotate 5) -->
+  <g transform="rotate(5, 10.5, 60)">
+    <rect x="5" y="60" width="11" height="20" rx="3" fill="#1565C0" stroke="#0D47A1" stroke-width="1.5"/>
+    <circle cx="10.5" cy="83" r="6" fill="#FDD835" stroke="#C9A800" stroke-width="1.5"/>
+  </g>
+  <!-- right arm: pointing right (rotate -90) -->
+  <g transform="rotate(-90, 69.5, 60)">
+    <rect x="64" y="60" width="11" height="20" rx="3" fill="#1565C0" stroke="#0D47A1" stroke-width="1.5"/>
+    <circle cx="69.5" cy="83" r="6" fill="#FDD835" stroke="#C9A800" stroke-width="1.5"/>
+  </g>
+</symbol>
+
+<!-- ─── POSE 3: WORRIED ────────────────────────────────────── -->
+<symbol id="fig-worried" viewBox="-15 0 110 125">
+  <rect x="15" y="111" width="25" height="7" rx="2" fill="#212121"/>
+  <rect x="40" y="111" width="25" height="7" rx="2" fill="#212121"/>
+  <rect x="18" y="92" width="20" height="22" rx="2" fill="#37474F" stroke="#263238" stroke-width="1.5"/>
+  <rect x="42" y="92" width="20" height="22" rx="2" fill="#37474F" stroke="#263238" stroke-width="1.5"/>
+  <rect x="18" y="82" width="44" height="11" rx="2" fill="#263238" stroke="#1A1A1A" stroke-width="1.5"/>
+  <rect x="16" y="56" width="48" height="27" rx="3" fill="#1565C0" stroke="#0D47A1" stroke-width="1.5"/>
+  <polygon points="16,56 36,56 29,83 16,83" fill="#FF6F00"/>
+  <polygon points="64,56 44,56 51,83 64,83" fill="#FF6F00"/>
+  <rect x="16" y="67" width="20" height="3" rx="1" fill="#FFF176" opacity="0.85"/>
+  <rect x="44" y="67" width="20" height="3" rx="1" fill="#FFF176" opacity="0.85"/>
+  <rect x="33" y="50" width="14" height="7" fill="#FDD835" stroke="#C9A800" stroke-width="1"/>
+  <rect x="22" y="22" width="36" height="29" rx="5" fill="#FDD835" stroke="#C9A800" stroke-width="1.5"/>
+  <!-- face: worried — angled brows, slight frown -->
+  <circle cx="32" cy="33" r="2.5" fill="#1A1A1A"/>
+  <circle cx="48" cy="33" r="2.5" fill="#1A1A1A"/>
+  <path d="M28,27 L34,30" stroke="#1A1A1A" stroke-width="1.8" stroke-linecap="round"/>
+  <path d="M52,27 L46,30" stroke="#1A1A1A" stroke-width="1.8" stroke-linecap="round"/>
+  <path d="M30,44 Q40,40 50,44" stroke="#1A1A1A" stroke-width="2" fill="none" stroke-linecap="round"/>
+  <!-- hat -->
+  <path d="M16,24 Q20,7 40,7 Q60,7 64,24 Z" fill="#FFCA28" stroke="#C9A800" stroke-width="1.5"/>
+  <ellipse cx="40" cy="24" rx="26" ry="6" fill="#FFCA28" stroke="#C9A800" stroke-width="1.5"/>
+  <circle cx="40" cy="7" r="5" fill="#FFCA28" stroke="#C9A800" stroke-width="1.5"/>
+  <ellipse cx="36" cy="13" rx="8" ry="4" fill="white" opacity="0.2"/>
+  <!-- sweat drop -->
+  <ellipse cx="63" cy="27" rx="3" ry="5" fill="#B3E5FC" stroke="#0288D1" stroke-width="0.8" transform="rotate(-15,63,27)"/>
+  <!-- left arm: raised worried-left (rotate 130) -->
+  <g transform="rotate(130, 10.5, 60)">
+    <rect x="5" y="60" width="11" height="20" rx="3" fill="#1565C0" stroke="#0D47A1" stroke-width="1.5"/>
+    <circle cx="10.5" cy="83" r="6" fill="#FDD835" stroke="#C9A800" stroke-width="1.5"/>
+  </g>
+  <!-- right arm: raised worried-right (rotate -130) -->
+  <g transform="rotate(-130, 69.5, 60)">
+    <rect x="64" y="60" width="11" height="20" rx="3" fill="#1565C0" stroke="#0D47A1" stroke-width="1.5"/>
+    <circle cx="69.5" cy="83" r="6" fill="#FDD835" stroke="#C9A800" stroke-width="1.5"/>
+  </g>
+</symbol>
+
+<!-- ─── POSE 4: CELEBRATING ────────────────────────────────── -->
+<symbol id="fig-celebrate" viewBox="-15 0 110 125">
+  <rect x="15" y="111" width="25" height="7" rx="2" fill="#212121"/>
+  <rect x="40" y="111" width="25" height="7" rx="2" fill="#212121"/>
+  <rect x="18" y="92" width="20" height="22" rx="2" fill="#37474F" stroke="#263238" stroke-width="1.5"/>
+  <rect x="42" y="92" width="20" height="22" rx="2" fill="#37474F" stroke="#263238" stroke-width="1.5"/>
+  <rect x="18" y="82" width="44" height="11" rx="2" fill="#263238" stroke="#1A1A1A" stroke-width="1.5"/>
+  <rect x="16" y="56" width="48" height="27" rx="3" fill="#1565C0" stroke="#0D47A1" stroke-width="1.5"/>
+  <polygon points="16,56 36,56 29,83 16,83" fill="#FF6F00"/>
+  <polygon points="64,56 44,56 51,83 64,83" fill="#FF6F00"/>
+  <rect x="16" y="67" width="20" height="3" rx="1" fill="#FFF176" opacity="0.85"/>
+  <rect x="44" y="67" width="20" height="3" rx="1" fill="#FFF176" opacity="0.85"/>
+  <rect x="33" y="50" width="14" height="7" fill="#FDD835" stroke="#C9A800" stroke-width="1"/>
+  <rect x="22" y="22" width="36" height="29" rx="5" fill="#FDD835" stroke="#C9A800" stroke-width="1.5"/>
+  <!-- face: big smile -->
+  <circle cx="32" cy="33" r="2.5" fill="#1A1A1A"/>
+  <circle cx="48" cy="33" r="2.5" fill="#1A1A1A"/>
+  <path d="M26,40 Q40,52 54,40" stroke="#1A1A1A" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  <!-- hat -->
+  <path d="M16,24 Q20,7 40,7 Q60,7 64,24 Z" fill="#FFCA28" stroke="#C9A800" stroke-width="1.5"/>
+  <ellipse cx="40" cy="24" rx="26" ry="6" fill="#FFCA28" stroke="#C9A800" stroke-width="1.5"/>
+  <circle cx="40" cy="7" r="5" fill="#FFCA28" stroke="#C9A800" stroke-width="1.5"/>
+  <ellipse cx="36" cy="13" rx="8" ry="4" fill="white" opacity="0.2"/>
+  <!-- stars -->
+  <text x="-9" y="48" font-size="13" fill="#FFD700">★</text>
+  <text x="72" y="44" font-size="13" fill="#FFD700">★</text>
+  <text x="5" y="32" font-size="9" fill="#FFC400">✦</text>
+  <text x="66" y="30" font-size="9" fill="#FFC400">✦</text>
+  <!-- left arm: way up (rotate 150) -->
+  <g transform="rotate(150, 10.5, 60)">
+    <rect x="5" y="60" width="11" height="20" rx="3" fill="#1565C0" stroke="#0D47A1" stroke-width="1.5"/>
+    <circle cx="10.5" cy="83" r="6" fill="#FDD835" stroke="#C9A800" stroke-width="1.5"/>
+  </g>
+  <!-- right arm: way up (rotate -150) -->
+  <g transform="rotate(-150, 69.5, 60)">
+    <rect x="64" y="60" width="11" height="20" rx="3" fill="#1565C0" stroke="#0D47A1" stroke-width="1.5"/>
+    <circle cx="69.5" cy="83" r="6" fill="#FDD835" stroke="#C9A800" stroke-width="1.5"/>
+  </g>
+</symbol>
+
+<!-- ─── POSE 5: CURIOUS ────────────────────────────────────── -->
+<symbol id="fig-curious" viewBox="-15 0 110 125">
+  <rect x="15" y="111" width="25" height="7" rx="2" fill="#212121"/>
+  <rect x="40" y="111" width="25" height="7" rx="2" fill="#212121"/>
+  <rect x="18" y="92" width="20" height="22" rx="2" fill="#37474F" stroke="#263238" stroke-width="1.5"/>
+  <rect x="42" y="92" width="20" height="22" rx="2" fill="#37474F" stroke="#263238" stroke-width="1.5"/>
+  <rect x="18" y="82" width="44" height="11" rx="2" fill="#263238" stroke="#1A1A1A" stroke-width="1.5"/>
+  <rect x="16" y="56" width="48" height="27" rx="3" fill="#1565C0" stroke="#0D47A1" stroke-width="1.5"/>
+  <polygon points="16,56 36,56 29,83 16,83" fill="#FF6F00"/>
+  <polygon points="64,56 44,56 51,83 64,83" fill="#FF6F00"/>
+  <rect x="16" y="67" width="20" height="3" rx="1" fill="#FFF176" opacity="0.85"/>
+  <rect x="44" y="67" width="20" height="3" rx="1" fill="#FFF176" opacity="0.85"/>
+  <rect x="33" y="50" width="14" height="7" fill="#FDD835" stroke="#C9A800" stroke-width="1"/>
+  <rect x="22" y="22" width="36" height="29" rx="5" fill="#FDD835" stroke="#C9A800" stroke-width="1.5"/>
+  <!-- face: thoughtful — one raised brow, slight smile -->
+  <circle cx="32" cy="33" r="2.5" fill="#1A1A1A"/>
+  <circle cx="48" cy="33" r="2.5" fill="#1A1A1A"/>
+  <path d="M28,27 Q32,24 36,27" stroke="#1A1A1A" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+  <path d="M30,41 Q40,47 50,41" stroke="#1A1A1A" stroke-width="2" fill="none" stroke-linecap="round"/>
+  <!-- hat -->
+  <path d="M16,24 Q20,7 40,7 Q60,7 64,24 Z" fill="#FFCA28" stroke="#C9A800" stroke-width="1.5"/>
+  <ellipse cx="40" cy="24" rx="26" ry="6" fill="#FFCA28" stroke="#C9A800" stroke-width="1.5"/>
+  <circle cx="40" cy="7" r="5" fill="#FFCA28" stroke="#C9A800" stroke-width="1.5"/>
+  <ellipse cx="36" cy="13" rx="8" ry="4" fill="white" opacity="0.2"/>
+  <!-- question bubble -->
+  <circle cx="68" cy="14" r="10" fill="#E3F2FD" stroke="#1E88E5" stroke-width="1.5"/>
+  <text x="68" y="18" text-anchor="middle" font-size="12" font-weight="bold" fill="#1E88E5" font-family="sans-serif">?</text>
+  <!-- left arm: at side (rotate 5) -->
+  <g transform="rotate(5, 10.5, 60)">
+    <rect x="5" y="60" width="11" height="20" rx="3" fill="#1565C0" stroke="#0D47A1" stroke-width="1.5"/>
+    <circle cx="10.5" cy="83" r="6" fill="#FDD835" stroke="#C9A800" stroke-width="1.5"/>
+  </g>
+  <!-- right arm: pointing toward content upper-left (rotate 150) -->
+  <g transform="rotate(150, 69.5, 60)">
+    <rect x="64" y="60" width="11" height="20" rx="3" fill="#1565C0" stroke="#0D47A1" stroke-width="1.5"/>
+    <circle cx="69.5" cy="83" r="6" fill="#FDD835" stroke="#C9A800" stroke-width="1.5"/>
+  </g>
+</symbol>
+
+</defs>
+</svg>
+
+<!-- ══ ACCENT BAR ════════════════════════════════════════════════ -->
+<div class="accent-bar"></div>
+
+<!-- ══ HEADER ════════════════════════════════════════════════════ -->
+<header>
+  <div>
+    <a class="back-link" href="index.html">&#8592; All Resources</a>
+    <div class="section-label">Bolton Robotics · First Lego League</div>
+    <h1>Your Coding Session <em>Guide</em></h1>
+    <div class="audience-tag">
+      <span>For</span>
+      <p>Students — the laptop is ready to go. Just follow the steps!</p>
+    </div>
+    <p class="header-intro">
+      Every session follows the same loop: open your mission file, write some code, send it to the robot, watch what happens, and tweak until it works. At the end, save your progress so the team can build on it next time.
+    </p>
+  </div>
+
+  <div class="header-figure">
+    <svg viewBox="-15 0 110 125" width="82" height="93" overflow="visible" class="fig-float">
+      <use href="#fig-wave"/>
+    </svg>
+    <div class="speech-bubble">
+      Ready to build something awesome? Let's go! 🔧
+    </div>
+  </div>
+</header>
+
+<!-- ══ SESSION FLOW STRIP ════════════════════════════════════════ -->
+<div class="flow-strip">
+  <div class="flow-strip-label">Your session at a glance — the same loop every time</div>
+  <div class="flow-steps">
+
+    <div class="flow-step">
+      <div class="flow-icon">💻</div>
+      <div>
+        <div class="flow-title">Open VS Code</div>
+        <div class="flow-sub">Start the editor</div>
+      </div>
+    </div>
+
+    <div class="flow-step">
+      <div class="flow-icon">📂</div>
+      <div>
+        <div class="flow-title">Find your file</div>
+        <div class="flow-sub">Open your mission</div>
+      </div>
+    </div>
+
+    <div class="flow-step">
+      <div class="flow-icon">⌨️</div>
+      <div>
+        <div class="flow-title">Write code</div>
+        <div class="flow-sub">Make the robot move!</div>
+      </div>
+    </div>
+
+    <div class="flow-step">
+      <div class="flow-icon">▶️</div>
+      <div>
+        <div class="flow-title">Send to robot</div>
+        <div class="flow-sub">Green play button</div>
+      </div>
+    </div>
+
+    <div class="flow-step">
+      <div class="flow-icon">🔁</div>
+      <div>
+        <div class="flow-title">Tweak &amp; repeat</div>
+        <div class="flow-sub">Until it works great</div>
+      </div>
+    </div>
+
+    <div class="flow-step">
+      <div class="flow-icon">💾</div>
+      <div>
+        <div class="flow-title">Commit your work</div>
+        <div class="flow-sub">Save for the team</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══ MAIN ══════════════════════════════════════════════════════ -->
+<main>
+
+  <!-- ═══ LEFT COLUMN ══════════════════════════════════════════ -->
+  <div class="col">
+
+    <div class="col-heading">Steps 1 – 5 · Open, Code, and Deploy</div>
+
+    <div class="steps">
+
+      <div class="step">
+        <div class="step-badge">1</div>
+        <div>
+          <div class="step-title">Open VS Code</div>
+          <div class="step-body">
+            Find VS Code on the laptop — it's the blue swirly icon. Click it to open. The team's project folder should already be loaded. If not, ask your coach to help open <strong>spike_basecode</strong>.
+          </div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-badge">2</div>
+        <div>
+          <div class="step-title">Find Your Mission File</div>
+          <div class="step-body">
+            In the file panel on the left side, look for your mission — something like <code>mission_01.py</code>. Click it to open it in the editor. That's your file to work on today!
+          </div>
+
+          <!-- Minifig pointing callout for robot.py -->
+          <div class="char-callout">
+            <div class="char-figure">
+              <svg viewBox="-15 0 110 125" width="55" height="63" overflow="visible">
+                <use href="#fig-point"/>
+              </svg>
+            </div>
+            <div class="speech-bubble" style="font-size:11.5px;">
+              Curious about <code>robot.py</code>? That's the robot's brain! Take a peek — and talk to your coach if you have ideas to improve it. 🤓
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-badge">3</div>
+        <div>
+          <div class="step-title">Write Your Code</div>
+          <div class="step-body">
+            Start typing! VS Code shows suggestions as you go and draws red squiggly lines under mistakes. Hover over a squiggle to see what's wrong.
+          </div>
+          <div class="callout-green" style="margin-top:6px;">
+            <p><strong>🏗️ Engineer's tip:</strong> Start small. Get one thing working first, then add more. A robot that reliably does one thing beats one that tries five things and crashes!</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-badge">4</div>
+        <div>
+          <div class="step-title">Power On Your SPIKE Hub</div>
+          <div class="step-body">
+            Press the big center button on the robot's brain to turn it on. Wait for it to show your robot's name on screen. It connects to the laptop wirelessly over Bluetooth — no cables!
+          </div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-badge">5</div>
+        <div>
+          <div class="step-title">Send Your Code to the Robot</div>
+          <div class="step-body">
+            Click the <strong>Run and Debug</strong> icon in the left sidebar (looks like a ▷ with a bug). Use the dropdown at the top to pick <em>your</em> robot's name. Then click the big green <strong>▶ Play</strong> button — your code flies over to the robot!
+          </div>
+
+          <!-- VS Code mockup -->
+          <!-- VS Code Run & Debug mockup with dropdown open -->
+          <div class="vscode-mockup" style="position:relative;">
+            <div class="vscode-titlebar">
+              <div class="vscode-dots">
+                <div class="vscode-dot dot-red"></div>
+                <div class="vscode-dot dot-yellow"></div>
+                <div class="vscode-dot dot-green"></div>
+              </div>
+              <div class="vscode-title">spike_basecode — VS Code</div>
+            </div>
+            <div class="vscode-body" style="min-height:130px;">
+              <!-- Sidebar: debug icon active -->
+              <div class="vscode-sidebar">
+                <div class="vscode-sidebar-icon">📄</div>
+                <div class="vscode-sidebar-icon">🔍</div>
+                <div class="vscode-sidebar-icon active" style="display:flex;align-items:center;justify-content:center;">
+                  <svg viewBox="0 0 16 16" width="20" height="20" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Play arrow outline -->
+                    <path d="M2,11 L2,5 L8,8 Z" fill="none" stroke="#cccccc" stroke-width="1" stroke-linejoin="round"/>
+                    <!-- Bug body (oval) -->
+                    <ellipse cx="10" cy="8" rx="3.2" ry="4.2" fill="none" stroke="#cccccc" stroke-width="1"/>
+                    <!-- Bug head -->
+                    <circle cx="10" cy="3.5" r="1.4" fill="none" stroke="#cccccc" stroke-width="1"/>
+                    <!-- Bug antennae -->
+                    <line x1="9.2" y1="2.2" x2="8.2" y2="1.1" stroke="#cccccc" stroke-width="0.9" stroke-linecap="round"/>
+                    <line x1="10.8" y1="2.2" x2="11.8" y2="1.1" stroke="#cccccc" stroke-width="0.9" stroke-linecap="round"/>
+                    <!-- Bug legs -->
+                    <line x1="6.8" y1="7"  x2="5.5" y2="6.4" stroke="#cccccc" stroke-width="0.8" stroke-linecap="round"/>
+                    <line x1="6.8" y1="8.2" x2="5.5" y2="8.2" stroke="#cccccc" stroke-width="0.8" stroke-linecap="round"/>
+                    <line x1="6.8" y1="9.4" x2="5.5" y2="10"  stroke="#cccccc" stroke-width="0.8" stroke-linecap="round"/>
+                    <!-- Center line on bug body -->
+                    <line x1="10" y1="4" x2="10" y2="12" stroke="#cccccc" stroke-width="0.7" stroke-dasharray="1,1" stroke-linecap="round"/>
+                  </svg>
+                </div>
+                <div class="vscode-sidebar-icon">🔌</div>
+              </div>
+              <!-- Run and Debug panel -->
+              <div style="flex:1;padding:10px 12px;background:#1e1e1e;">
+                <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+                  <span style="font-family:'DM Sans',sans-serif;font-size:10px;font-weight:700;letter-spacing:0.1em;color:#cccccc;text-transform:uppercase;">Run and Debug</span>
+                  <!-- Green play button -->
+                  <div style="width:22px;height:22px;background:#2DA44E;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;">
+                    <span style="color:white;font-size:11px;margin-left:2px;">▶</span>
+                  </div>
+                  <!-- Annotation arrow -->
+                  <div style="display:flex;align-items:center;gap:3px;margin-left:2px;">
+                    <svg viewBox="0 0 40 16" width="36" height="14">
+                      <path d="M2,8 Q20,2 36,8" stroke="#FFCA28" stroke-width="2" fill="none" stroke-linecap="round"/>
+                      <polygon points="36,5 42,8 36,11" fill="#FFCA28"/>
+                    </svg>
+                    <span style="font-family:'DM Mono',monospace;font-size:9px;color:#FFCA28;">click this!</span>
+                  </div>
+                </div>
+
+                <!-- Dropdown open — floating panel -->
+                <div style="background:#252526;border:1px solid #454545;border-radius:6px;overflow:hidden;width:190px;box-shadow:0 4px 16px rgba(0,0,0,0.5);">
+                  <!-- Selected item -->
+                  <div style="background:#094771;padding:6px 12px;display:flex;align-items:center;gap:7px;">
+                    <span style="color:#3794ff;font-size:11px;">✓</span>
+                    <span style="font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;color:#ffffff;">Run on BR-01</span>
+                  </div>
+                  <!-- Other robots -->
+                  <div style="padding:6px 12px 6px 26px;font-family:'DM Sans',sans-serif;font-size:12px;color:#cccccc;">Run on BR-02</div>
+                  <div style="padding:4px 12px 6px 26px;font-family:'DM Sans',sans-serif;font-size:12px;color:#cccccc;">Run on BR-03</div>
+                  <!-- Divider -->
+                  <div style="border-top:1px solid #454545;margin:2px 0;"></div>
+                  <!-- VS Code extras -->
+                  <div style="padding:5px 12px 3px 26px;font-family:'DM Sans',sans-serif;font-size:11px;color:#888;">Node.js…</div>
+                  <div style="padding:3px 12px 3px 26px;font-family:'DM Sans',sans-serif;font-size:11px;color:#888;">Python Debugger…</div>
+                  <div style="padding:3px 12px 6px 26px;font-family:'DM Sans',sans-serif;font-size:11px;color:#888;">Add Configuration…</div>
+                </div>
+
+                <!-- Bottom annotation -->
+                <div style="margin-top:7px;display:flex;align-items:center;gap:5px;">
+                  <svg viewBox="0 0 16 20" width="12" height="16">
+                    <path d="M8,2 Q2,10 8,18" stroke="#FFCA28" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+                    <polygon points="5,16 8,22 11,16" fill="#FFCA28"/>
+                  </svg>
+                  <span style="font-family:'DM Mono',monospace;font-size:9px;color:#FFCA28;">pick your robot, then hit ▶</span>
+                </div>
+
+              </div>
+            </div>
+          </div>
+
+          <!-- Orange cones flanking troubleshoot -->
+          <div class="cone-row">
+            <svg viewBox="0 0 30 40" width="22" height="30" xmlns="http://www.w3.org/2000/svg">
+              <rect x="3" y="33" width="24" height="6" rx="1.5" fill="#757575"/>
+              <polygon points="15,2 27,33 3,33" fill="#FF6F00"/>
+              <polygon points="10.5,15 19.5,15 21,21 9,21" fill="white" opacity="0.82"/>
+              <polygon points="12.5,23 17.5,23 18.5,28 11.5,28" fill="white" opacity="0.82"/>
+              <polygon points="14,4 16,4 18,10 12,10" fill="white" opacity="0.5"/>
+            </svg>
+            <div class="cone-dash"></div>
+            <svg viewBox="0 0 30 40" width="22" height="30" xmlns="http://www.w3.org/2000/svg">
+              <rect x="3" y="33" width="24" height="6" rx="1.5" fill="#757575"/>
+              <polygon points="15,2 27,33 3,33" fill="#FF6F00"/>
+              <polygon points="10.5,15 19.5,15 21,21 9,21" fill="white" opacity="0.82"/>
+              <polygon points="12.5,23 17.5,23 18.5,28 11.5,28" fill="white" opacity="0.82"/>
+              <polygon points="14,4 16,4 18,10 12,10" fill="white" opacity="0.5"/>
+            </svg>
+          </div>
+
+          <!-- Troubleshoot with worried minifig -->
+          <div class="troubleshoot">
+            <div class="ts-header">
+              <div class="char-figure">
+                <svg viewBox="-15 0 110 125" width="48" height="55" overflow="visible">
+                  <use href="#fig-worried"/>
+                </svg>
+              </div>
+              <div class="ts-bubble">Robot not answering? Try this:</div>
+            </div>
+            <div class="ts-steps">
+              <div class="ts-step"><div class="ts-num">1</div><span>Make sure the hub is ON and showing its name on screen.</span></div>
+              <div class="ts-step"><div class="ts-num">2</div><span>Check the dropdown — is the right robot selected?</span></div>
+              <div class="ts-step"><div class="ts-num">3</div><span>Press the hub's center button once, then click ▶ again.</span></div>
+              <div class="ts-step"><div class="ts-num">4</div><span>Still stuck? Wave your coach over — Bluetooth can be grumpy! 📡</span></div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═══ RIGHT COLUMN ══════════════════════════════════════════ -->
+  <div class="col">
+
+    <div class="col-heading">Steps 6 – 9 · Repeat and Save Your Work</div>
+
+    <div class="steps">
+
+      <div class="step">
+        <div class="step-badge">6</div>
+        <div>
+          <div class="step-title">Watch, Adjust, and Run Again</div>
+          <div class="step-body">
+            Watch carefully what the robot does. Go too far? Wrong direction? Head back to VS Code, fix the code, then click the green <strong>▶ Play</strong> button again — every click sends your freshest changes to the robot. Repeat until it does exactly what you want!
+          </div>
+          <div class="callout-green" style="margin-top:6px;">
+            <p><strong>🏆 This is real engineering.</strong> Professional robotics teams do this exact loop every day. You're doing it the right way.</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="section-divider">
+      <hr>
+      <div style="display:flex;align-items:center;gap:6px;flex-shrink:0;">
+        <svg viewBox="0 0 32 32" width="20" height="20" xmlns="http://www.w3.org/2000/svg">
+          <!-- N point — red -->
+          <polygon points="16,2 19,16 16,13 13,16" fill="#ED1C24"/>
+          <!-- S point — gray -->
+          <polygon points="16,30 13,16 16,19 19,16" fill="#9A9A9A"/>
+          <!-- E point -->
+          <polygon points="30,16 16,13 19,16 16,19" fill="#9A9A9A"/>
+          <!-- W point -->
+          <polygon points="2,16 16,19 13,16 16,13" fill="#C8C8C8"/>
+          <!-- center ring -->
+          <circle cx="16" cy="16" r="3.5" fill="white" stroke="#ED1C24" stroke-width="1.5"/>
+          <circle cx="16" cy="16" r="1.2" fill="#ED1C24"/>
+          <!-- N label -->
+          <text x="16" y="11.5" text-anchor="middle" font-size="4.5" font-weight="700" fill="#ED1C24" font-family="sans-serif">N</text>
+        </svg>
+        <span>End of Session · Save Your Work</span>
+      </div>
+      <hr>
+    </div>
+
+    <p style="font-size:12.5px;color:var(--gray-dark);line-height:1.65;margin-bottom:14px;">
+      Before you close the laptop, lock in your progress. This is called a <strong>commit</strong> — like saving your game, but it also remembers exactly what you changed and why.
+    </p>
+
+    <div class="steps">
+
+      <div class="step">
+        <div class="step-badge">7</div>
+        <div>
+          <div class="step-title">Open GitHub Desktop</div>
+          <div class="step-body">
+            Find GitHub Desktop on the laptop — it has a white Octocat circle icon 🐙. Open it. You'll see a list of files you changed on the left side.
+          </div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-badge">8</div>
+        <div>
+          <div class="step-title">Write a Commit Message</div>
+          <div class="step-body">
+            In the Summary box at the bottom-left, describe what you did — like a subject line for an email. <strong>Be specific!</strong> Future you (and your teammates) will be glad you did.
+          </div>
+
+          <!-- GitHub Desktop mockup -->
+          <div class="ghd-mockup">
+            <div class="ghd-titlebar">
+              <div class="vscode-dots">
+                <div class="vscode-dot dot-red"></div>
+                <div class="vscode-dot dot-yellow"></div>
+                <div class="vscode-dot dot-green"></div>
+              </div>
+              <div class="ghd-title">GitHub Desktop — spike_basecode</div>
+            </div>
+            <div class="ghd-body">
+              <div class="ghd-sidebar">
+                <div class="ghd-sidebar-label">Changed files</div>
+                <div class="ghd-changed-file">
+                  <div class="ghd-file-dot"></div>
+                  <div class="ghd-file-name">mission_01.py</div>
+                </div>
+              </div>
+              <div class="ghd-main">
+                <div>
+                  <div class="ghd-field-label">Summary ✏️ (required)</div>
+                  <div class="ghd-input filled">Adjust drive distance for coral reef mission</div>
+                </div>
+                <div>
+                  <div class="ghd-field-label">Description (optional)</div>
+                  <div class="ghd-textarea">More detail here if you want...</div>
+                </div>
+                <button class="ghd-commit-btn">⎇ Commit to main</button>
+              </div>
+            </div>
+          </div>
+
+          <div style="font-size:11px;color:var(--gray-mid);margin-top:5px;font-style:italic;">
+            ✅ Good: "Adjust drive distance for coral reef mission"&nbsp;&nbsp;❌ Not great: "fixed stuff"
+          </div>
+
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-badge">9</div>
+        <div>
+          <div class="step-title">Click "Commit to main"</div>
+          <div class="step-body">
+            Click the green button. Your work is saved to the team's local code history. That's your part done — great work!
+          </div>
+
+          <!-- Celebrating minifig -->
+          <div class="celebrate-callout">
+            <div class="char-figure">
+              <svg viewBox="-15 0 110 125" width="58" height="66" overflow="visible" class="fig-celebrate">
+                <use href="#fig-celebrate"/>
+              </svg>
+            </div>
+            <div class="speech-bubble speech-bubble-success">
+              You did it! Your code is saved. 🎉 Nice work, engineer!
+            </div>
+          </div>
+
+          <div class="callout-blue" style="margin-top:8px;">
+            <p>☁️ <strong>What about pushing to GitHub?</strong> Your coach will push the code to the cloud from home later, where there's wi-fi. Your commit is safe — they'll take it from here!</p>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Explore box with curious minifig -->
+    <div class="explore-box">
+      <div class="char-figure" style="flex-shrink:0;">
+        <svg viewBox="-15 0 110 125" width="55" height="63" overflow="visible">
+          <use href="#fig-curious"/>
+        </svg>
+      </div>
+      <div class="explore-content">
+        <div class="explore-title">🔬 Want to go deeper?</div>
+        <div class="explore-body">
+          Once your mission is working reliably, take a peek at <code>robot.py</code> — it's the shared code that makes everything run. You might spot something to improve or a feature you'd love to add. Talk to your coach and explore together. The best engineers are always curious!
+        </div>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<!-- ══ FOOTER ════════════════════════════════════════════════════ -->
+<footer>
+  <div class="footer-left">Bolton Robotics · FIRST Lego League · Student Edition</div>
+  <div class="footer-right">spike_basecode · github.com/fssfll</div>
+</footer>
+
+</body>
+</html>
